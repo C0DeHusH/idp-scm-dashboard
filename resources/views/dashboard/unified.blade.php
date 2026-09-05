@@ -120,295 +120,304 @@
                         @endauth
                     </div>
                 </div>
-                
-                <!-- Filters Form -->
-                <form method="GET" action="{{ route('dashboard.unified') }}" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-5 rounded-xl shadow-lg mb-8 flex flex-wrap items-center gap-4">
-                    <div class="flex items-center gap-2">
-                        <label for="areaSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area:</label>
-                        <select name="area" id="areaSelect" onchange="handleAreaChange()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
-                            <option value="All">All Areas</option>
-                            @foreach($areas as $a)
-                                <option value="{{ $a }}" {{ $areaFilter == $a ? 'selected' : '' }}>{{ $a }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
+                <!-- Unified Form for all filtering -->
+                <form method="GET" action="{{ route('dashboard.unified') }}" id="dashboardForm" class="space-y-8">
                     
-                    <div class="flex items-center gap-2" id="branchFilterContainer">
-                        <label for="branchSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch:</label>
-                        <select name="branch" id="branchSelect" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
-                            <option value="All">All Branches</option>
-                            @foreach($branches as $b)
-                                @php
-                                    $branchArea = \App\Models\InventoryRecord::where('branch', $b)->value('area');
-                                @endphp
-                                <option value="{{ $b }}" data-area="{{ $branchArea }}" {{ $branchFilter == $b ? 'selected' : '' }}>{{ $b }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    @if($areaFilter !== 'All' || $branchFilter !== 'All')
-                        <div class="ml-auto">
-                            <a href="{{ route('dashboard.unified') }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Reset Filters</a>
-                        </div>
-                    @endif
-                </form>
-
-                <!-- WIDGET SECTION 1: AREA STOCK OUT & AVERAGE RATES -->
-                <div class="mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Area-Level Stockout Performance ({{ $areaFilter }})
-                    </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-red-500">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class A Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateA }}%</p>
-                            <span class="text-xs text-red-500 dark:text-red-400 mt-1 block">High Priority Stockout Risk</span>
-                        </div>
+                    <!-- ============================================== -->
+                    <!-- SECTION 1: AREA-LEVEL PRESENTATION           -->
+                    <!-- ============================================== -->
+                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl">
                         
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-amber-500">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class B Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateB }}%</p>
-                            <span class="text-xs text-amber-500 dark:text-amber-400 mt-1 block">Medium Priority Risk</span>
+                        <!-- Area Header & Filters -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Area-Level Stockout Performance ({{ $areaFilter }})
+                            </h2>
+                            <div class="flex items-center gap-3 w-full md:w-auto">
+                                <label for="areaSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Area:</label>
+                                <select name="area" id="areaSelect" onchange="handleAreaChange()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 w-full md:w-48">
+                                    <option value="All">All Areas</option>
+                                    @foreach($areas as $a)
+                                        <option value="{{ $a }}" {{ $areaFilter == $a ? 'selected' : '' }}>{{ $a }}</option>
+                                    @endforeach
+                                </select>
+                                @if($areaFilter !== 'All' || $branchFilter !== 'All')
+                                    <a href="{{ route('dashboard.unified') }}" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap">Reset Filters</a>
+                                @endif
+                            </div>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-yellow-400">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class C Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateC }}%</p>
-                            <span class="text-xs text-yellow-600 dark:text-yellow-400 mt-1 block">Low Priority Risk</span>
+                        <!-- Area Rate Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-red-500">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class A Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateA }}%</p>
+                                <span class="text-xs text-red-500 dark:text-red-400 mt-1 block">High Priority Stockout Risk</span>
+                            </div>
+                            
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-amber-500">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class B Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateB }}%</p>
+                                <span class="text-xs text-amber-500 dark:text-amber-400 mt-1 block">Medium Priority Risk</span>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-yellow-400">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class C Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaRateC }}%</p>
+                                <span class="text-xs text-yellow-600 dark:text-yellow-400 mt-1 block">Low Priority Risk</span>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-blue-500">
+                                <h3 class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-wider">Area Average Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaAverageRate }}%</p>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Overall Performance Index</span>
+                            </div>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-blue-500">
-                            <h3 class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-wider">Area Average Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaAverageRate }}%</p>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Overall Performance Index</span>
-                        </div>
-                    </div>
-                </div>
+                      
 
-                <!-- WIDGET SECTION 2: BRANCH STOCK OUT & AVERAGE RATES (Toggled) -->
-                <div id="branchSectionWidget" class="mb-8">
-                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Branch-Level Stockout Performance ({{ $branchFilter }})
-                    </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-rose-500">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class A Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateA }}%</p>
-                            <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">Branch High Priority Risk</span>
-                        </div>
-                        
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-orange-400">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class B Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateB }}%</p>
-                            <span class="text-xs text-orange-500 dark:text-orange-400 mt-1 block">Branch Medium Priority Risk</span>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-amber-400">
-                            <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class C Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateC }}%</p>
-                            <span class="text-xs text-amber-600 dark:text-amber-400 mt-1 block">Branch Low Priority Risk</span>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-indigo-600">
-                            <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-300 uppercase tracking-wider">Branch Average Rate</h3>
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchAverageRate }}%</p>
-                            <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Branch Performance Index</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- WIDGET SECTION 3: EXECUTIVE KPI TRENDS -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 mb-8">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <!-- Area Line Graphs (Trends) -->
                         <div>
-                            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Executive KPI Trends</h2>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Historical performance metrics mapping DoI and Stock Out Rates.</p>
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Area KPI Trends</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Historical performance metrics mapping DoI and Stock Out Rates.</p>
+                                </div>
+                                <select id="timeframeToggle" class="mt-3 md:mt-0 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 font-semibold" onchange="toggleTimeframe(this.value)">
+                                    <option value="ytd">Year-to-Date (YTD)</option>
+                                    <option value="weekly">Weekly View</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Graph Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall After PO</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                                    <div class="relative flex-grow"><canvas id="chartAfterPO"></canvas></div>
+                                </div>
+                                
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall Before PO</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                                    <div class="relative flex-grow"><canvas id="chartBeforePO"></canvas></div>
+                                </div>
+
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Days of Inventory</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">DoI Ratio</p>
+                                    <div class="relative flex-grow"><canvas id="chartDoI"></canvas></div>
+                                </div>
+
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Average Stock Out Rate by Area</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Comparison</p>
+                                    <div class="relative flex-grow"><canvas id="stockoutChart"></canvas></div>
+                                </div>
+
+                                <!-- Per Branch OOS and Class A are now side-by-side in this grid -->
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                                    <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
+                                </div>
+
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
+                                    <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
+                                </div>
+                            </div>
                         </div>
-                        <select id="timeframeToggle" class="mt-3 md:mt-0 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 font-semibold" onchange="toggleTimeframe(this.value)">
-                            <option value="ytd">Year-to-Date (YTD)</option>
-                            <option value="weekly">Weekly View</option>
-                        </select>
                     </div>
 
-                    <!-- RESTRUCTURED TO 2 COLUMNS FOR READABILITY -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
-                        <!-- Line Graph Widgets -->
-                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall After PO</h4>
-                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
-                            <div class="relative flex-grow"><canvas id="chartAfterPO"></canvas></div>
-                        </div>
-                        
-                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall Before PO</h4>
-                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
-                            <div class="relative flex-grow"><canvas id="chartBeforePO"></canvas></div>
-                        </div>
-                        
-                        <!-- Transferred Below: -->
-                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
-                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
-                            <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
-                        </div>
-                        
-                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Days of Inventory</h4>
-                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">DoI Ratio</p>
-                            <div class="relative flex-grow"><canvas id="chartDoI"></canvas></div>
-                        </div>
-                        
-                        <!-- Full width final graph -->
-                        <div class="lg:col-span-2 border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                            <h4 class="text-base font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
-                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
-                            <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Chart and Watchlist Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <!-- Stock Out Rate Bar Chart (Summary of Average Stock Out Rate Per Area) -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Average Stock Out Rate by Area</h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Comparative network average stockout trends across operating areas.</p>
-                        <div class="relative flex-grow h-72">
-                            <canvas id="stockoutChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- Network Watchlist -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Network Watchlist (Class A Stockouts)</h2>
-                        <div class="overflow-y-auto max-h-72 flex-grow pr-1">
-                            <table class="w-full text-left border-collapse text-sm">
-                                <thead class="sticky top-0 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase text-xs">
-                                    <tr>
-                                        <th class="p-3">Model</th>
-                                        <th class="p-3 text-center">Inventory</th>
-                                        <th class="p-3 text-center">Suggested Transfer</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/50">
-                                    @forelse($classA->where('stock_status', 'Stockout')->take(10) as $item)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                        <td class="p-3 font-semibold text-red-600 dark:text-red-400">{{ $item->model }}</td>
-                                        <td class="p-3 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
-                                        <td class="p-3 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ $item->suggested_transfer }}</td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="3" class="p-4 text-center text-gray-500">No active Class A stockouts found.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pareto Action Lists -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Class A Actions -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
-                        <h3 class="font-bold text-base text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                            <span>Class A Actions</span>
-                            <span class="text-xs bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-300 px-2.5 py-1 rounded-full font-semibold">{{ $classA->count() }} items</span>
-                        </h3>
-                        <div class="overflow-x-auto overflow-y-auto max-h-[34rem] pr-1">
-                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                                <thead class="sticky top-0 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs uppercase">
-                                    <tr>
-                                        <th class="p-2.5">Model</th>
-                                        <th class="p-2.5 text-center">Inv</th>
-                                        <th class="p-2.5 text-center">Trnsf</th>
-                                        <th class="p-2.5 text-center">DOI</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                    @foreach($classA as $item)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                        <td class="p-2.5 {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                            {{ $item->model }}
-                                        </td>
-                                        <td class="p-2.5 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
-                                        <td class="p-2.5 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
-                                        <td class="p-2.5 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
-                                    </tr>
+                    <!-- ============================================== -->
+                    <!-- SECTION 2: BRANCH-LEVEL PRESENTATION         -->
+                    <!-- ============================================== -->
+                    <div id="branchSectionWidget" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl">
+                        
+                        <!-- Branch Header & Filter -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Branch-Level Stockout Performance ({{ $branchFilter }})
+                            </h2>
+                            <div class="flex items-center gap-2 w-full md:w-auto" id="branchFilterContainer">
+                                <label for="branchSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Branch:</label>
+                                <select name="branch" id="branchSelect" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 w-full md:w-64">
+                                    <option value="All">All Branches</option>
+                                    @foreach($branches as $b)
+                                        @php
+                                            $branchArea = \App\Models\InventoryRecord::where('branch', $b)->value('area');
+                                        @endphp
+                                        <option value="{{ $b }}" data-area="{{ $branchArea }}" {{ $branchFilter == $b ? 'selected' : '' }}>{{ $b }}</option>
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Class B Actions -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
-                        <h3 class="font-bold text-base text-amber-600 dark:text-amber-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                            <span>Class B Actions</span>
-                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 px-2.5 py-1 rounded-full font-semibold">{{ $classB->count() }} items</span>
-                        </h3>
-                        <div class="overflow-x-auto overflow-y-auto max-h-[34rem] pr-1">
-                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                                <thead class="sticky top-0 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs uppercase">
-                                    <tr>
-                                        <th class="p-2.5">Model</th>
-                                        <th class="p-2.5 text-center">Inv</th>
-                                        <th class="p-2.5 text-center">Trnsf</th>
-                                        <th class="p-2.5 text-center">DOI</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                    @foreach($classB as $item)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                        <td class="p-2.5 {{ $item->stock_status == 'Stockout' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                            {{ $item->model }}
-                                        </td>
-                                        <td class="p-2.5 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
-                                        <td class="p-2.5 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
-                                        <td class="p-2.5 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <!-- Branch Rate Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-rose-500">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class A Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateA }}%</p>
+                                <span class="text-xs text-rose-500 dark:text-rose-400 mt-1 block">Branch High Priority Risk</span>
+                            </div>
+                            
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-orange-400">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class B Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateB }}%</p>
+                                <span class="text-xs text-orange-500 dark:text-orange-400 mt-1 block">Branch Medium Priority Risk</span>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-amber-400">
+                                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class C Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchRateC }}%</p>
+                                <span class="text-xs text-amber-600 dark:text-amber-400 mt-1 block">Branch Low Priority Risk</span>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-indigo-600">
+                                <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-300 uppercase tracking-wider">Branch Average Rate</h3>
+                                <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $branchAverageRate }}%</p>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Branch Performance Index</span>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <!-- Pareto Action Models (Now directly below Branch Rate Cards) -->
+                        <div class="mb-10">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Pareto Action Models</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                
+                                <!-- Class A Actions -->
+                                <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <h3 class="font-bold text-sm text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
+                                        <span>Class A Models</span>
+                                        <span class="text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-300 px-2 py-1 rounded-full font-semibold">{{ $classA->count() }} items</span>
+                                    </h3>
+                                    <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
+                                        <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                                            <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
+                                                <tr>
+                                                    <th class="p-2">Model</th>
+                                                    <th class="p-2 text-center">Inv</th>
+                                                    <th class="p-2 text-center">Trnsf</th>
+                                                    <th class="p-2 text-center">DOI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
+                                                @foreach($classA as $item)
+                                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
+                                                    <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
+                                                        {{ $item->model }}
+                                                    </td>
+                                                    <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
+                                                    <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
+                                                    <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
-                    <!-- Class C Actions -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
-                        <h3 class="font-bold text-base text-yellow-600 dark:text-yellow-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                            <span>Class C Actions</span>
-                            <span class="text-xs bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-2.5 py-1 rounded-full font-semibold">{{ $classC->count() }} items</span>
-                        </h3>
-                        <div class="overflow-x-auto overflow-y-auto max-h-[34rem] pr-1">
-                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                                <thead class="sticky top-0 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs uppercase">
-                                    <tr>
-                                        <th class="p-2.5">Model</th>
-                                        <th class="p-2.5 text-center">Inv</th>
-                                        <th class="p-2.5 text-center">Trnsf</th>
-                                        <th class="p-2.5 text-center">DOI</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                    @foreach($classC as $item)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
-                                        <td class="p-2.5 {{ $item->stock_status == 'Stockout' ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                            {{ $item->model }}
-                                        </td>
-                                        <td class="p-2.5 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
-                                        <td class="p-2.5 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
-                                        <td class="p-2.5 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                <!-- Class B Actions -->
+                                <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <h3 class="font-bold text-sm text-amber-600 dark:text-amber-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
+                                        <span>Class B Models</span>
+                                        <span class="text-[10px] bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 px-2 py-1 rounded-full font-semibold">{{ $classB->count() }} items</span>
+                                    </h3>
+                                    <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
+                                        <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                                            <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
+                                                <tr>
+                                                    <th class="p-2">Model</th>
+                                                    <th class="p-2 text-center">Inv</th>
+                                                    <th class="p-2 text-center">Trnsf</th>
+                                                    <th class="p-2 text-center">DOI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
+                                                @foreach($classB as $item)
+                                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
+                                                    <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
+                                                        {{ $item->model }}
+                                                    </td>
+                                                    <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
+                                                    <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
+                                                    <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Class C Actions -->
+                                <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <h3 class="font-bold text-sm text-yellow-600 dark:text-yellow-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
+                                        <span>Class C Models</span>
+                                        <span class="text-[10px] bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-full font-semibold">{{ $classC->count() }} items</span>
+                                    </h3>
+                                    <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
+                                        <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                                            <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
+                                                <tr>
+                                                    <th class="p-2">Model</th>
+                                                    <th class="p-2 text-center">Inv</th>
+                                                    <th class="p-2 text-center">Trnsf</th>
+                                                    <th class="p-2 text-center">DOI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
+                                                @foreach($classC as $item)
+                                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
+                                                    <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
+                                                        {{ $item->model }}
+                                                    </td>
+                                                    <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
+                                                    <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ $item->suggested_transfer }}</td>
+                                                    <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ $item->doi }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                </div>
+                        <!-- Network Watchlist -->
+                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col bg-gray-50/50 dark:bg-gray-800/30">
+                            <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Branch Watchlist (Class A Stockouts)</h2>
+                            <div class="overflow-y-auto max-h-64 flex-grow pr-1">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase text-xs">
+                                        <tr>
+                                            <th class="p-3">Model</th>
+                                            <th class="p-3 text-center">Inventory</th>
+                                            <th class="p-3 text-center">Suggested Transfer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700/50">
+                                        @forelse($classA->where('stock_status', 'Stockout')->take(10) as $item)
+                                        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/30 transition">
+                                            <td class="p-3 font-semibold text-red-600 dark:text-red-400">{{ $item->model }}</td>
+                                            <td class="p-3 text-center text-gray-700 dark:text-gray-300">{{ $item->remaining_inventory }}</td>
+                                            <td class="p-3 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ $item->suggested_transfer }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="p-4 text-center text-gray-500">No active Class A stockouts found.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -556,12 +565,16 @@
 
         // Reusable function to create the highly intuitive KPI charts
         function createKpiChart(ctxId, label, dataKey, colorStr, isDark, isPercentage = true) {
-            const ctx = document.getElementById(ctxId).getContext('2d');
+            const canvas = document.getElementById(ctxId);
+            if (!canvas) return null;
+            
+            const ctx = canvas.getContext('2d');
             const gridColor = isDark ? '#374151' : '#e5e7eb';
             const fontColor = isDark ? '#9ca3af' : '#6b7280';
             
             // Generate some top headroom so labels don't get chopped off at the top border
-            const dataMax = Math.max(...currentKpiData[dataKey]);
+            const dataArr = currentKpiData[dataKey] || [];
+            const dataMax = dataArr.length ? Math.max(...dataArr) : 0;
             const suggestedMax = dataMax + (dataMax * 0.15); 
 
             return new Chart(ctx, {
@@ -570,7 +583,7 @@
                     labels: currentKpiData.labels,
                     datasets: [{
                         label: label,
-                        data: currentKpiData[dataKey],
+                        data: dataArr,
                         borderColor: colorStr,
                         backgroundColor: colorStr + '20', // Opacity fill below the line
                         borderWidth: 3, 
@@ -677,49 +690,52 @@
                 return Number(((rateA + rateB + rateC) / 3).toFixed(2));
             });
 
-            stockoutChart = new Chart(document.getElementById('stockoutChart').getContext('2d'), {
-                type: 'bar', // Better for comparative categorical Area Data
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Average Stock Out Rate %',
-                        data: areaAverageData,
-                        backgroundColor: isDark ? 'rgba(99, 102, 241, 0.8)' : 'rgba(99, 102, 241, 0.9)',
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }]
-                },
-                options: { 
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { top: 25 } },
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            display: true,
-                            align: 'top',
-                            anchor: 'end',
-                            offset: 4,
-                            color: isDark ? '#f3f4f6' : '#111827',
-                            font: { weight: 'bold', size: 11 },
-                            formatter: function(value) { return value + '%'; }
-                        }
+            const stockoutCanvas = document.getElementById('stockoutChart');
+            if (stockoutCanvas) {
+                stockoutChart = new Chart(stockoutCanvas.getContext('2d'), {
+                    type: 'bar', // Better for comparative categorical Area Data
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Average Stock Out Rate %',
+                            data: areaAverageData,
+                            backgroundColor: isDark ? 'rgba(99, 102, 241, 0.8)' : 'rgba(99, 102, 241, 0.9)',
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: isDark ? '#374151' : '#e5e7eb', borderDash: [5, 5] },
-                            ticks: { color: isDark ? '#9ca3af' : '#6b7280', callback: function(value) { return value + '%'; } },
-                            border: { display: false }
+                    options: { 
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: { top: 25 } },
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                display: true,
+                                align: 'top',
+                                anchor: 'end',
+                                offset: 4,
+                                color: isDark ? '#f3f4f6' : '#111827',
+                                font: { weight: 'bold', size: 11 },
+                                formatter: function(value) { return value + '%'; }
+                            }
                         },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: isDark ? '#9ca3af' : '#4b5563', font: { weight: 'bold' } },
-                            border: { color: isDark ? '#4b5563' : '#d1d5db' }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: isDark ? '#374151' : '#e5e7eb', borderDash: [5, 5] },
+                                ticks: { color: isDark ? '#9ca3af' : '#6b7280', callback: function(value) { return value + '%'; } },
+                                border: { display: false }
+                            },
+                            x: { 
+                                grid: { display: false },
+                                ticks: { color: isDark ? '#9ca3af' : '#4b5563', font: { weight: 'bold' } },
+                                border: { color: isDark ? '#4b5563' : '#d1d5db' }
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
 
             window.kpiCharts.afterPO = createKpiChart('chartAfterPO', 'After PO OOS', 'afterPO', '#10b981', isDark, true);
             window.kpiCharts.beforePO = createKpiChart('chartBeforePO', 'Before PO OOS', 'beforePO', '#f59e0b', isDark, true);
@@ -736,7 +752,8 @@
                     chartObj.data.labels = currentKpiData.labels;
                     chartObj.data.datasets[0].data = currentKpiData[dataKey];
                     
-                    const maxVal = Math.max(...currentKpiData[dataKey]);
+                    const dataArr = currentKpiData[dataKey] || [];
+                    const maxVal = dataArr.length ? Math.max(...dataArr) : 0;
                     chartObj.options.scales.y.suggestedMax = maxVal + (maxVal * 0.15);
                     
                     chartObj.update();
