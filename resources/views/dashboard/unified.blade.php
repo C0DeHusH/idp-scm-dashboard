@@ -10,7 +10,10 @@
             darkMode: 'class',
         }
     </script>
+    <!-- Core Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js DataLabels Plugin for intuitive numbers above points -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
     <div class="flex h-screen overflow-hidden">
@@ -88,7 +91,7 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Real-time inventory visibility, Pareto classifications, and network stockout analytics.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <!-- Toggle View Mode Button (Area Level vs Full Level) -->
+                        <!-- Toggle View Mode Button -->
                         <button onclick="toggleBranchView()" id="viewToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2.5 rounded-lg shadow-sm transition text-sm flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             <span id="viewToggleText">Hide Branch Level</span>
@@ -101,18 +104,24 @@
                         </button>
 
                         @auth
-                            <a href="{{ route('admin.import') }}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md transition duration-150 ease-in-out inline-flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                                Data Management
+                            <a href="{{ route('admin.import') }}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-lg shadow-md transition duration-150 ease-in-out inline-flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                Data
                             </a>
+                            <form method="POST" action="{{ route('logout') }}" class="inline m-0 p-0">
+                                @csrf
+                                <button type="submit" class="bg-red-600 hover:bg-red-500 text-white font-semibold px-4 py-2.5 rounded-lg shadow-md transition duration-150 ease-in-out inline-flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                    Logout
+                                </button>
+                            </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium text-sm">Admin Login</a>
+                            <a href="{{ route('login') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium text-sm ml-2">Admin Login</a>
                         @endauth
                     </div>
                 </div>
                 
-
-                <!-- Filters Form with Dependent Cascading Dropdowns -->
+                <!-- Filters Form -->
                 <form method="GET" action="{{ route('dashboard.unified') }}" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-5 rounded-xl shadow-lg mb-8 flex flex-wrap items-center gap-4">
                     <div class="flex items-center gap-2">
                         <label for="areaSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area:</label>
@@ -170,10 +179,7 @@
 
                         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 border-t-4 border-blue-500">
                             <h3 class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase tracking-wider">Area Average Rate</h3>
-                            @php
-                                $computedAreaAverage = round(($areaRateA + $areaRateB + $areaRateC) / 3, 2);
-                            @endphp
-                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $computedAreaAverage }}%</p>
+                            <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ $areaAverageRate }}%</p>
                             <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Overall Performance Index</span>
                         </div>
                     </div>
@@ -211,9 +217,60 @@
                     </div>
                 </div>
 
+                <!-- WIDGET SECTION 3: EXECUTIVE KPI TRENDS -->
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 mb-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Executive KPI Trends</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Historical performance metrics mapping DoI and Stock Out Rates.</p>
+                        </div>
+                        <select id="timeframeToggle" class="mt-3 md:mt-0 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 font-semibold" onchange="toggleTimeframe(this.value)">
+                            <option value="ytd">Year-to-Date (YTD)</option>
+                            <option value="weekly">Weekly View</option>
+                        </select>
+                    </div>
+
+                    <!-- RESTRUCTURED TO 2 COLUMNS FOR READABILITY -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        <!-- Line Graph Widgets -->
+                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall After PO</h4>
+                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                            <div class="relative flex-grow"><canvas id="chartAfterPO"></canvas></div>
+                        </div>
+                        
+                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall Before PO</h4>
+                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                            <div class="relative flex-grow"><canvas id="chartBeforePO"></canvas></div>
+                        </div>
+                        
+                        <!-- Transferred Below: -->
+                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
+                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                            <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
+                        </div>
+                        
+                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Days of Inventory</h4>
+                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">DoI Ratio</p>
+                            <div class="relative flex-grow"><canvas id="chartDoI"></canvas></div>
+                        </div>
+                        
+                        <!-- Full width final graph -->
+                        <div class="lg:col-span-2 border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <h4 class="text-base font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
+                            <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
+                            <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Chart and Watchlist Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <!-- Stock Out Rate Line Chart (Summary of Average Stock Out Rate Per Area) -->
+                    <!-- Stock Out Rate Bar Chart (Summary of Average Stock Out Rate Per Area) -->
                     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-xl rounded-xl p-6 flex flex-col">
                         <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Average Stock Out Rate by Area</h2>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Comparative network average stockout trends across operating areas.</p>
@@ -356,8 +413,11 @@
         </div>
     </div>
 
-    <!-- Script Suite: Theme Toggle, Sidebar Expand/Collapse, Branch Show/Hide Toggle & Line Chart -->
+    <!-- Script Suite: Theme Toggle, Sidebar Expand/Collapse, Branch Show/Hide Toggle & Line Charts -->
     <script>
+        // Ensure the DataLabels plugin is globally registered before drawing charts
+        Chart.register(ChartDataLabels);
+
         // 1. Sidebar Expand/Collapse Logic
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -406,7 +466,21 @@
             }
         }
 
-        // Restore sidebar and view states on load
+        // 3. Theme Toggle Logic with LocalStorage persistence
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateChartTheme(false);
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateChartTheme(true);
+            }
+        }
+
+        // Restore UI States on Load
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('sidebarState') === 'collapsed') {
                 const sidebar = document.getElementById('sidebar');
@@ -429,26 +503,12 @@
                 document.getElementById('viewToggleText').textContent = 'Show Branch Level';
             }
 
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            }
+
             filterBranches();
         });
-
-        // 3. Theme Toggle Logic with LocalStorage persistence
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                updateChartTheme(false);
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                updateChartTheme(true);
-            }
-        }
-
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.classList.remove('dark');
-        }
 
         // 4. Cascading Dependent Branch Filtering Logic
         function filterBranches() {
@@ -483,85 +543,221 @@
             document.getElementById('areaSelect').form.submit();
         }
 
-        // 5. Line Chart Initialization & Area Average Stock Out Rate Computation
-        const ctx = document.getElementById('stockoutChart').getContext('2d');
-        const chartData = {!! json_encode($stockOutRates) !!};
-        
-        const labels = [...new Set(chartData.map(d => d.area))];
-        
-        const areaAverageData = labels.map(label => {
-            const recordA = chartData.find(d => d.area === label && d.pareto_class === 'Class A');
-            const recordB = chartData.find(d => d.area === label && d.pareto_class === 'Class B');
-            const recordC = chartData.find(d => d.area === label && d.pareto_class === 'Class C');
-
-            const rateA = recordA ? (recordA.stockouts / recordA.total) * 100 : 0;
-            const rateB = recordB ? (recordB.stockouts / recordB.total) * 100 : 0;
-            const rateC = recordC ? (recordC.stockouts / recordC.total) * 100 : 0;
-
-            return Number(((rateA + rateB + rateC) / 3).toFixed(2));
-        });
-
+        // 5. INTUITIVE LINE CHART INITIALIZATION
         let stockoutChart;
+        window.kpiCharts = {};
 
-        function initChart(isDark) {
-            if (stockoutChart) stockoutChart.destroy();
+        // Ingest Data from Controller
+        const chartData = {!! isset($stockOutRates) ? json_encode($stockOutRates) : '[]' !!};
+        const kpiYtd = {!! isset($kpiYtd) ? json_encode($kpiYtd) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[]}' !!};
+        const kpiWeekly = {!! isset($kpiWeekly) ? json_encode($kpiWeekly) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[]}' !!};
+        
+        let currentKpiData = kpiYtd;
 
-            Chart.defaults.color = isDark ? '#9ca3af' : '#4b5563';
-            Chart.defaults.borderColor = isDark ? '#374151' : '#e5e7eb';
+        // Reusable function to create the highly intuitive KPI charts
+        function createKpiChart(ctxId, label, dataKey, colorStr, isDark, isPercentage = true) {
+            const ctx = document.getElementById(ctxId).getContext('2d');
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+            const fontColor = isDark ? '#9ca3af' : '#6b7280';
+            
+            // Generate some top headroom so labels don't get chopped off at the top border
+            const dataMax = Math.max(...currentKpiData[dataKey]);
+            const suggestedMax = dataMax + (dataMax * 0.15); 
 
-            stockoutChart = new Chart(ctx, {
+            return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: currentKpiData.labels,
                     datasets: [{
-                        label: 'Average Stock Out Rate %',
-                        data: areaAverageData,
-                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                        borderColor: 'rgba(99, 102, 241, 1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: 'rgba(99, 102, 241, 1)',
-                        pointBorderColor: '#ffffff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        tension: 0.3,
-                        fill: true
+                        label: label,
+                        data: currentKpiData[dataKey],
+                        borderColor: colorStr,
+                        backgroundColor: colorStr + '20', // Opacity fill below the line
+                        borderWidth: 3, 
+                        tension: 0.4, // Smooth curvy lines
+                        fill: true,
+                        pointBackgroundColor: isDark ? '#1f2937' : '#ffffff',
+                        pointBorderColor: colorStr,
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
                     }]
                 },
-                options: { 
+                options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: isDark ? '#374151' : '#e5e7eb' },
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
+                    layout: {
+                        padding: { top: 30, right: 15, left: 10, bottom: 5 } // Padding ensures data labels fit inside the canvas
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index', 
+                            intersect: false,
+                            backgroundColor: isDark ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDark ? '#f3f4f6' : '#111827',
+                            bodyColor: isDark ? '#d1d5db' : '#374151',
+                            borderColor: isDark ? '#4b5563' : '#e5e7eb',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.parsed.y;
+                                    return context.dataset.label + ': ' + val + (isPercentage ? '%' : '');
                                 }
                             }
                         },
-                        x: {
-                            grid: { display: false }
+                        // INTUITIVE DATALABELS CONFIGURATION
+                        datalabels: {
+                            display: true,
+                            
+                            // Smart Align: If the point is dangerously close to the max scale limit, move the label Below the point
+                            align: function(context) {
+                                const value = context.dataset.data[context.dataIndex];
+                                const currentMax = context.chart.scales.y.max;
+                                return value > (currentMax * 0.85) ? 'bottom' : 'top';
+                            },
+                            anchor: 'center',
+                            offset: 8,
+                            
+                            // Frosted Background Pill so gridlines don't cross through text
+                            backgroundColor: isDark ? 'rgba(17, 24, 39, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: 4,
+                            padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                            color: isDark ? '#f3f4f6' : '#111827',
+                            font: {
+                                weight: 'bold',
+                                size: 10
+                            },
+                            formatter: function(value) {
+                                return isPercentage ? value + '%' : Math.round(value);
+                            }
                         }
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Avg Stock Out Rate: ' + context.parsed.y + '%';
-                                }
-                            }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: suggestedMax,
+                            grid: { color: gridColor, borderDash: [5, 5] }, 
+                            ticks: { 
+                                color: fontColor,
+                                font: { size: 10 },
+                                callback: function(value) { return value + (isPercentage ? '%' : ''); }
+                            },
+                            border: { display: false } 
+                        },
+                        x: {
+                            grid: { display: false }, 
+                            ticks: { color: fontColor, font: { size: 11, weight: '500' } },
+                            border: { color: gridColor }
                         }
                     }
                 }
             });
         }
 
+        function initChart(isDark) {
+            if (stockoutChart) stockoutChart.destroy();
+            if (window.kpiCharts.afterPO) window.kpiCharts.afterPO.destroy();
+            if (window.kpiCharts.perBranch) window.kpiCharts.perBranch.destroy();
+            if (window.kpiCharts.beforePO) window.kpiCharts.beforePO.destroy();
+            if (window.kpiCharts.doi) window.kpiCharts.doi.destroy();
+            if (window.kpiCharts.classA) window.kpiCharts.classA.destroy();
+
+            Chart.defaults.color = isDark ? '#9ca3af' : '#4b5563';
+
+            const labels = [...new Set(chartData.map(d => d.area))];
+            const areaAverageData = labels.map(label => {
+                const recordA = chartData.find(d => d.area === label && d.pareto_class === 'Class A');
+                const recordB = chartData.find(d => d.area === label && d.pareto_class === 'Class B');
+                const recordC = chartData.find(d => d.area === label && d.pareto_class === 'Class C');
+
+                const rateA = recordA ? (recordA.stockouts / recordA.total) * 100 : 0;
+                const rateB = recordB ? (recordB.stockouts / recordB.total) * 100 : 0;
+                const rateC = recordC ? (recordC.stockouts / recordC.total) * 100 : 0;
+                return Number(((rateA + rateB + rateC) / 3).toFixed(2));
+            });
+
+            stockoutChart = new Chart(document.getElementById('stockoutChart').getContext('2d'), {
+                type: 'bar', // Better for comparative categorical Area Data
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Average Stock Out Rate %',
+                        data: areaAverageData,
+                        backgroundColor: isDark ? 'rgba(99, 102, 241, 0.8)' : 'rgba(99, 102, 241, 0.9)',
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: { 
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 25 } },
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            display: true,
+                            align: 'top',
+                            anchor: 'end',
+                            offset: 4,
+                            color: isDark ? '#f3f4f6' : '#111827',
+                            font: { weight: 'bold', size: 11 },
+                            formatter: function(value) { return value + '%'; }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: isDark ? '#374151' : '#e5e7eb', borderDash: [5, 5] },
+                            ticks: { color: isDark ? '#9ca3af' : '#6b7280', callback: function(value) { return value + '%'; } },
+                            border: { display: false }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: isDark ? '#9ca3af' : '#4b5563', font: { weight: 'bold' } },
+                            border: { color: isDark ? '#4b5563' : '#d1d5db' }
+                        }
+                    }
+                }
+            });
+
+            window.kpiCharts.afterPO = createKpiChart('chartAfterPO', 'After PO OOS', 'afterPO', '#10b981', isDark, true);
+            window.kpiCharts.beforePO = createKpiChart('chartBeforePO', 'Before PO OOS', 'beforePO', '#f59e0b', isDark, true);
+            window.kpiCharts.perBranch = createKpiChart('chartPerBranch', 'Per Branch OOS', 'perBranch', '#3b82f6', isDark, true);
+            window.kpiCharts.doi = createKpiChart('chartDoI', 'Days of Inventory', 'doi', '#8b5cf6', isDark, false);
+            window.kpiCharts.classA = createKpiChart('chartClassA', 'Class A Stock Out', 'classA', '#ef4444', isDark, true);
+        }
+
+        window.toggleTimeframe = function(timeframe) {
+            currentKpiData = timeframe === 'weekly' ? kpiWeekly : kpiYtd;
+            
+            const updateChartData = (chartObj, dataKey) => {
+                if(chartObj) {
+                    chartObj.data.labels = currentKpiData.labels;
+                    chartObj.data.datasets[0].data = currentKpiData[dataKey];
+                    
+                    const maxVal = Math.max(...currentKpiData[dataKey]);
+                    chartObj.options.scales.y.suggestedMax = maxVal + (maxVal * 0.15);
+                    
+                    chartObj.update();
+                }
+            };
+
+            updateChartData(window.kpiCharts.afterPO, 'afterPO');
+            updateChartData(window.kpiCharts.beforePO, 'beforePO');
+            updateChartData(window.kpiCharts.perBranch, 'perBranch');
+            updateChartData(window.kpiCharts.doi, 'doi');
+            updateChartData(window.kpiCharts.classA, 'classA');
+        };
+
         function updateChartTheme(isDark) {
             initChart(isDark);
         }
 
-        initChart(document.documentElement.classList.contains('dark'));
+        const initialDarkState = localStorage.getItem('theme') === 'dark' || 
+                                 (!localStorage.getItem('theme') && document.documentElement.classList.contains('dark'));
+        initChart(initialDarkState);
+
     </script>
 </body>
 </html>

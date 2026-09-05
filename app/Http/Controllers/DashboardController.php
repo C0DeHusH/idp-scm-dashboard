@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InventoryRecord;
+use App\Models\KpiRecord; // Added for dynamic KPI importing
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,7 +36,7 @@ class DashboardController extends Controller
             return round(($stockouts / $total) * 100, 2);
         };
 
-        // --- 1. AREA-LEVEL METRICS (Calculated across the selected Area) ---
+        // --- 1. AREA-LEVEL METRICS ---
         $areaQuery = InventoryRecord::query();
         if ($areaFilter !== 'All') {
             $areaQuery->where('area', $areaFilter);
@@ -50,7 +51,7 @@ class DashboardController extends Controller
         $areaAverageRate = round(($areaRateA + $areaRateB + $areaRateC) / 3, 2);
 
 
-        // --- 2. BRANCH-LEVEL METRICS (Calculated for the specific selected Branch) ---
+        // --- 2. BRANCH-LEVEL METRICS ---
         $branchRateA = 0; $branchRateB = 0; $branchRateC = 0; $branchAverageRate = 0;
         if ($branchFilter !== 'All') {
             $branchClassA = InventoryRecord::where('branch', $branchFilter)->where('pareto_class', 'Class A')->get();
@@ -62,7 +63,6 @@ class DashboardController extends Controller
             $branchRateC = $calcRate($branchClassC);
             $branchAverageRate = round(($branchRateA + $branchRateB + $branchRateC) / 3, 2);
         } else {
-            // If no single branch is selected, fall back to overall or area metrics
             $branchRateA = $areaRateA;
             $branchRateB = $areaRateB;
             $branchRateC = $areaRateC;
@@ -79,11 +79,60 @@ class DashboardController extends Controller
         $areas = InventoryRecord::select('area')->distinct()->pluck('area');
         $branches = InventoryRecord::select('branch')->distinct()->pluck('branch');
 
+
+        // --- 3. DYNAMIC KPI LINE GRAPH DATA ---
+        // Fetch data mapped from the KpiSheetsImport logic
+        $ytdRecords = KpiRecord::where('type', 'YTD')->orderBy('id')->get();
+        $weeklyRecords = KpiRecord::where('type', 'Weekly')->orderBy('id')->get();
+
+        $kpiYtd = [
+            'labels'    => $ytdRecords->pluck('period')->toArray(),
+            'afterPO'   => $ytdRecords->pluck('after_po_oos')->toArray(),
+            'perBranch' => $ytdRecords->pluck('per_branch_oos')->toArray(),
+            'beforePO'  => $ytdRecords->pluck('before_po_oos')->toArray(),
+            'doi'       => $ytdRecords->pluck('doi')->toArray(),
+            'classA'    => $ytdRecords->pluck('class_a_oos')->toArray(),
+        ];
+
+        $kpiWeekly = [
+            'labels'    => $weeklyRecords->pluck('period')->toArray(),
+            'afterPO'   => $weeklyRecords->pluck('after_po_oos')->toArray(),
+            'perBranch' => $weeklyRecords->pluck('per_branch_oos')->toArray(),
+            'beforePO'  => $weeklyRecords->pluck('before_po_oos')->toArray(),
+            'doi'       => $weeklyRecords->pluck('doi')->toArray(),
+            'classA'    => $weeklyRecords->pluck('class_a_oos')->toArray(),
+        ];
+
+        // --- FALLBACK MECHANISM ---
+        // Prevents blank charts on initial load before the first Excel file is imported
+        if (empty($kpiYtd['labels'])) {
+            $kpiYtd = [
+                'labels'    => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                'afterPO'   => [24.10, 12.97, 12.19, 13.41, 12.14, 9.78, 5.78, 4.44],
+                'perBranch' => [28.47, 34.12, 28.12, 29.24, 30.81, 35.97, 34.45, 32.08],
+                'beforePO'  => [35.03, 36.08, 28.31, 26.47, 35.20, 45.10, 40.65, 25.45],
+                'doi'       => [139.0, 95.31, 98.74, 104.79, 85.43, 82.95, 89.55, 92.00],
+                'classA'    => [33.33, 9.09, 0, 0, 0, 0, 0, 0]
+            ];
+        }
+
+        if (empty($kpiWeekly['labels'])) {
+            $kpiWeekly = [
+                'labels'    => ['08/10', '08/17', '08/24', '08/31'],
+                'afterPO'   => [4.52, 4.05, 3.57, 4.44],
+                'perBranch' => [36.44, 33.66, 33.37, 32.08],
+                'beforePO'  => [33.28, 28.62, 26.96, 25.45],
+                'doi'       => [93.34, 92.71, 104.10, 92.00],
+                'classA'    => [0, 0, 0, 0]
+            ];
+        }
+
         return view('dashboard.unified', compact(
             'classA', 'classB', 'classC', 'areas', 'branches', 
             'areaFilter', 'branchFilter', 'stockOutRates',
             'areaRateA', 'areaRateB', 'areaRateC', 'areaAverageRate',
-            'branchRateA', 'branchRateB', 'branchRateC', 'branchAverageRate'
+            'branchRateA', 'branchRateB', 'branchRateC', 'branchAverageRate',
+            'kpiYtd', 'kpiWeekly'
         ));
     }
 }
