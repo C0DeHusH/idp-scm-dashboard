@@ -4,6 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Synchronization Hub - SCM</title>
+    <!-- Enhanced Success & Error Toast Notifications Pop-Up -->
+    @if (session('success'))
+        <div id="toast-success" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-emerald-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-xl"></div>
+            
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 text-emerald-500 bg-emerald-100/50 rounded-xl dark:bg-emerald-900/40 dark:text-emerald-400 relative z-10">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            
+            <div class="ml-3 flex-grow relative z-10">
+                <p class="text-sm font-bold text-gray-900 dark:text-white">Sync Complete</p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{{ session('success') }}</p>
+            </div>
+            
+            <button type="button" class="relative z-10 ml-auto -mx-1.5 -my-1.5 bg-transparent text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" onclick="document.getElementById('toast-success').style.display='none'" aria-label="Close">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+            </button>
+        </div>
+        <script>
+            setTimeout(function() {
+                const toast = document.getElementById('toast-success');
+                if (toast) {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-10', 'opacity-0');
+                    setTimeout(() => toast.remove(), 500); 
+                }
+            }, 5000); 
+        </script>
+    @endif
+
+    <!-- NEW ERROR TOAST -->
+    @if (session('error'))
+        <div id="toast-error" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-red-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-xl"></div>
+            
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 text-red-500 bg-red-100/50 rounded-xl dark:bg-red-900/40 dark:text-red-400 relative z-10">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            
+            <div class="ml-3 flex-grow relative z-10">
+                <p class="text-sm font-bold text-gray-900 dark:text-white">Import Failed</p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{{ session('error') }}</p>
+            </div>
+            
+            <button type="button" class="relative z-10 ml-auto -mx-1.5 -my-1.5 bg-transparent text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" onclick="document.getElementById('toast-error').style.display='none'" aria-label="Close">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+            </button>
+        </div>
+        <script>
+            setTimeout(function() {
+                const toastError = document.getElementById('toast-error');
+                if (toastError) {
+                    toastError.classList.remove('translate-y-0', 'opacity-100');
+                    toastError.classList.add('translate-y-10', 'opacity-0');
+                    setTimeout(() => toastError.remove(), 500); 
+                }
+            }, 8000); 
+        </script>
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

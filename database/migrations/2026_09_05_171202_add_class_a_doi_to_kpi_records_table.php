@@ -33,40 +33,35 @@ class KpiDataImport implements ToCollection, WithCalculatedFormulas
             'class_a_doi' => []
         ];
 
-   foreach ($collection as $index => $row) {
+        foreach ($collection as $index => $row) {
             $rawCell0 = (string)($row[0] ?? '');
             $firstCell = strtolower(trim($rawCell0));
 
-            // NORMALIZE TEXT: Remove periods (e.g., P.O. becomes PO) and replace non-breaking spaces
-            $cleanCell = str_replace(['.', "\xc2\xa0"], ['', ' '], $firstCell);
-            // Replace multiple spaces with a single space
-            $cleanCell = preg_replace('/\s+/', ' ', $cleanCell);
-
             // Track active section header context
-            if (str_contains($cleanCell, 'stock outrate') || str_contains($cleanCell, 'doi') || str_contains($cleanCell, 'stock out rate')) {
-                $currentSection = $cleanCell;
+            if (str_contains($firstCell, 'stock outrate') || str_contains($firstCell, 'doi') || str_contains($firstCell, 'stock out rate')) {
+                $currentSection = $firstCell;
             }
 
             // Detect timeline rows and ensure the calculated value isn't an empty string
-            if ((empty($cleanCell) || in_array($cleanCell, ['month', 'date', 'period', 'week', 'timeline', 'label'])) && !empty($row[2]) && trim((string)$row[2]) !== '') {
+            if ((empty($firstCell) || in_array($firstCell, ['month', 'date', 'period', 'week', 'timeline', 'label'])) && !empty($row[2]) && trim((string)$row[2]) !== '') {
                 foreach ($row as $colIndex => $cell) {
                     if ($colIndex >= 2 && !empty($cell) && trim((string)$cell) !== '') {
                         $periods[$colIndex] = $this->formatDate($cell);
                     }
                 }
             } 
-            // Map rows precisely - Increased strlen limit to < 100 to allow long headers
-            elseif ((str_contains($cleanCell, 'per branch class a') || str_contains($cleanCell, 'class a stock out rate') || str_contains($cleanCell, 'class a stock out %')) && strlen($cleanCell) < 100) {
+            // Map rows precisely - Increased strlen limit to < 100 to allow long headers like "(Before PO Balance)"
+            elseif ((str_contains($firstCell, 'per branch class a') || str_contains($firstCell, 'class a stock out rate') || str_contains($firstCell, 'class a stock out %')) && strlen($firstCell) < 100) {
                 $metrics['class_a'] = $this->extractRowData($row);
-            } elseif ((str_contains($cleanCell, 'mc class a doi') || (str_contains($cleanCell, 'class a') && str_contains($cleanCell, 'doi'))) && strlen($cleanCell) < 100) {
+            } elseif ((str_contains($firstCell, 'mc class a doi') || (str_contains($firstCell, 'class a') && str_contains($firstCell, 'doi'))) && strlen($firstCell) < 100) {
                 $metrics['class_a_doi'] = $this->extractRowData($row, false);
-            } elseif (str_contains($cleanCell, 'after po') && strlen($cleanCell) < 100) {
+            } elseif (str_contains($firstCell, 'after po') && strlen($firstCell) < 100) {
                 $metrics['after_po'] = $this->extractRowData($row);
-            } elseif ((str_contains($cleanCell, 'per-branch') || str_contains($cleanCell, 'per branch')) && strlen($cleanCell) < 100) {
+            } elseif ((str_contains($firstCell, 'per-branch') || str_contains($firstCell, 'per branch')) && strlen($firstCell) < 100) {
                 $metrics['per_branch'] = $this->extractRowData($row);
-            } elseif (str_contains($cleanCell, 'before po') && strlen($cleanCell) < 100) {
+            } elseif (str_contains($firstCell, 'before po') && strlen($firstCell) < 100) {
                 $metrics['before_po'] = $this->extractRowData($row);
-            } elseif ((str_contains($cleanCell, 'doi') || str_contains($cleanCell, 'days of inventory')) && !str_contains($cleanCell, 'class a') && strlen($cleanCell) < 100) {
+            } elseif ((str_contains($firstCell, 'doi') || str_contains($firstCell, 'days of inventory')) && !str_contains($firstCell, 'class a') && strlen($firstCell) < 100) {
                 $metrics['doi'] = $this->extractRowData($row, false);
             }
         }
@@ -85,7 +80,6 @@ class KpiDataImport implements ToCollection, WithCalculatedFormulas
                     'before_po_oos'  => $metrics['before_po'][$colIndex] ?? 0,
                     'class_a_oos'    => $metrics['class_a'][$colIndex] ?? 0,
                     'doi'            => $metrics['doi'][$colIndex] ?? 0,
-                    // Direct assignment bypassing Schema cache limits
                     'class_a_doi'    => $metrics['class_a_doi'][$colIndex] ?? 0, 
                 ]);
             }

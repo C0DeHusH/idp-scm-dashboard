@@ -44,22 +44,18 @@
                     <svg class="w-5 h-5 mr-3 text-indigo-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     <span class="sidebar-text transition-opacity duration-300">Dashboard Overview</span>
                 </a>
-
                 <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Procurement">
                     <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span class="sidebar-text transition-opacity duration-300">Procurement</span>
                 </a>
-
-                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Manpower">
+                <a href="{{ route('manpower.index') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Manpower">
                     <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <span class="sidebar-text transition-opacity duration-300">Manpower</span>
                 </a>
-
                 <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Budgets">
                     <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="sidebar-text transition-opacity duration-300">Budgets</span>
                 </a>
-
                 <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="KPI">
                     <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     <span class="sidebar-text transition-opacity duration-300">KPI</span>
@@ -81,7 +77,7 @@
         </aside>
 
         <!-- Main Content Scrollable Area Container -->
-        <div class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <div class="flex-1 flex flex-col h-screen overflow-y-auto relative">
             <div class="w-full mx-auto py-8 px-6 sm:px-8 lg:px-12">
                 
                 <!-- Header & Auth Controls -->
@@ -91,12 +87,7 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Real-time inventory visibility, Pareto classifications, and network stockout analytics.</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <!-- Toggle View Mode Button -->
-                        <button onclick="toggleBranchView()" id="viewToggleBtn" class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-4 py-2.5 rounded-lg shadow-sm transition text-sm flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            <span id="viewToggleText">Hide Branch Level</span>
-                        </button>
-
+                        
                         <!-- Dark/Light Mode Toggle Button -->
                         <button onclick="toggleDarkMode()" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium p-2.5 rounded-lg shadow-sm transition flex items-center justify-center w-10 h-10" title="Toggle Theme">
                             <svg id="theme-icon-sun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -121,13 +112,19 @@
                     </div>
                 </div>
 
-                <!-- Unified Form for all filtering -->
+                <!-- Unified Form for all filtering (AJAX Intercepted) -->
                 <form method="GET" action="{{ route('dashboard.unified') }}" id="dashboardForm" class="space-y-8">
                     
+                    <!-- Hidden Container storing encoded PHP payload for Charts -->
+                    <div id="chartDataContainer" class="hidden" 
+                         data-chart="{{ isset($stockOutRates) ? json_encode($stockOutRates) : '[]' }}" 
+                         data-kpi-ytd="{{ isset($kpiYtd) ? json_encode($kpiYtd) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[],"classADoI":[]}' }}" data-kpi-weekly="{{ isset($kpiWeekly) ? json_encode($kpiWeekly) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[],"classADoI":[]}' }}">
+                    </div>
+
                     <!-- ============================================== -->
                     <!-- SECTION 1: AREA-LEVEL PRESENTATION           -->
                     <!-- ============================================== -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl">
+                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl transition-all">
                         
                         <!-- Area Header & Filters -->
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
@@ -174,11 +171,15 @@
                                 <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Overall Performance Index</span>
                             </div>
                         </div>
-
-                      
+                        
+                         <div class="lg:col-span-2 border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Average Stock Out Rate by Area</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Comparison</p>
+                                    <div class="relative flex-grow"><canvas id="stockoutChart"></canvas></div>
+                                </div>
 
                         <!-- Area Line Graphs (Trends) -->
-                        <div>
+                        <div> <br>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Area KPI Trends</h3>
@@ -193,15 +194,30 @@
                             <!-- Graph Grid -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
+                                    <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
+                                </div>
+                                     <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
                                     <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall After PO</h4>
                                     <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
                                     <div class="relative flex-grow"><canvas id="chartAfterPO"></canvas></div>
                                 </div>
-                                
                                 <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
                                     <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall Before PO</h4>
                                     <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
                                     <div class="relative flex-grow"><canvas id="chartBeforePO"></canvas></div>
+                                </div>
+                                
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
+                                    <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
+                                </div>
+                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Class A Days of Inventory</h4>
+                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Class A DoI Ratio</p>
+                                    <div class="relative flex-grow"><canvas id="chartClassADoI"></canvas></div>
                                 </div>
 
                                 <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
@@ -209,34 +225,17 @@
                                     <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">DoI Ratio</p>
                                     <div class="relative flex-grow"><canvas id="chartDoI"></canvas></div>
                                 </div>
+                                
+                  
 
-                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Average Stock Out Rate by Area</h4>
-                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Comparison</p>
-                                    <div class="relative flex-grow"><canvas id="stockoutChart"></canvas></div>
-                                </div>
-
-                                <!-- Per Branch OOS and Class A are now side-by-side in this grid -->
-                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
-                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
-                                    <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
-                                </div>
-
-                                <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
-                                    <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
-                                    <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
-                                    <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-
                     <!-- ============================================== -->
                     <!-- SECTION 2: BRANCH-LEVEL PRESENTATION         -->
                     <!-- ============================================== -->
-                    <div id="branchSectionWidget" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl">
+                    <div id="branchSectionWidget" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 p-6 rounded-xl shadow-xl transition-all">
                         
                         <!-- Branch Header & Filter -->
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
@@ -245,7 +244,7 @@
                             </h2>
                             <div class="flex items-center gap-2 w-full md:w-auto" id="branchFilterContainer">
                                 <label for="branchSelect" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Branch:</label>
-                                <select name="branch" id="branchSelect" onchange="this.form.submit()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 w-full md:w-64">
+                                <select name="branch" id="branchSelect" onchange="fetchFilteredData()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 w-full md:w-64">
                                     <option value="All">All Branches</option>
                                     @foreach($branches as $b)
                                         @php
@@ -283,8 +282,8 @@
                                 <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">Branch Performance Index</span>
                             </div>
                         </div>
-                        
-                        <!-- Pareto Action Models (Now directly below Branch Rate Cards) -->
+
+                        <!-- Pareto Action Models -->
                         <div class="mb-10">
                             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Pareto Action Models</h3>
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -418,11 +417,12 @@
 
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
 
-    <!-- Script Suite: Theme Toggle, Sidebar Expand/Collapse, Branch Show/Hide Toggle & Line Charts -->
+    <!-- Script Suite: Theme Toggle, Sidebar Expand/Collapse & Line Charts -->
     <script>
         // Ensure the DataLabels plugin is globally registered before drawing charts
         Chart.register(ChartDataLabels);
@@ -456,26 +456,7 @@
             }
         }
 
-        // 2. Show/Hide Branch View Toggle Logic
-        function toggleBranchView() {
-            const branchWidget = document.getElementById('branchSectionWidget');
-            const branchFilterContainer = document.getElementById('branchFilterContainer');
-            const viewToggleText = document.getElementById('viewToggleText');
-
-            if (branchWidget.classList.contains('hidden')) {
-                branchWidget.classList.remove('hidden');
-                branchFilterContainer.classList.remove('hidden');
-                viewToggleText.textContent = 'Hide Branch Level';
-                localStorage.setItem('viewMode', 'full');
-            } else {
-                branchWidget.classList.add('hidden');
-                branchFilterContainer.classList.add('hidden');
-                viewToggleText.textContent = 'Show Branch Level';
-                localStorage.setItem('viewMode', 'area-only');
-            }
-        }
-
-        // 3. Theme Toggle Logic with LocalStorage persistence
+        // 2. Theme Toggle Logic with LocalStorage persistence
         function toggleDarkMode() {
             const html = document.documentElement;
             if (html.classList.contains('dark')) {
@@ -505,26 +486,69 @@
                     el.classList.add('hidden');
                 });
             }
-
-            if (localStorage.getItem('viewMode') === 'area-only') {
-                document.getElementById('branchSectionWidget').classList.add('hidden');
-                document.getElementById('branchFilterContainer').classList.add('hidden');
-                document.getElementById('viewToggleText').textContent = 'Show Branch Level';
-            }
-
             if (localStorage.getItem('theme') === 'light') {
                 document.documentElement.classList.remove('dark');
             }
-
             filterBranches();
         });
 
-        // 4. Cascading Dependent Branch Filtering Logic
+        // 3. Cascading Dependent Branch Filtering & AJAX Update Logic
+        async function fetchFilteredData() {
+            const form = document.getElementById('dashboardForm');
+            const url = new URL(window.location.href.split('?')[0]); 
+            const formData = new FormData(form);
+            
+            // Defensively capture timeframe toggle state to prevent silent wipeouts during HTML DOM replacements
+            const timeframeSelect = document.getElementById('timeframeToggle');
+            const currentTimeframe = timeframeSelect ? timeframeSelect.value : 'ytd';
+
+            // Build new query string
+            formData.forEach((value, key) => {
+                if(value) url.searchParams.append(key, value);
+            });
+
+            // Add visual fade out feedback while loading
+            form.classList.add('opacity-50', 'pointer-events-none', 'transition-opacity', 'duration-300');
+
+            try {
+                const response = await fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const html = await response.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Swap the inner content without refreshing the whole page
+                const newForm = doc.getElementById('dashboardForm');
+                if (newForm) {
+                    form.innerHTML = newForm.innerHTML;
+                    
+                    // Re-apply preserved toggle state
+                    const newTimeframeSelect = document.getElementById('timeframeToggle');
+                    if (newTimeframeSelect) {
+                        newTimeframeSelect.value = currentTimeframe;
+                    }
+                    
+                    // Re-initialize logic after DOM swap
+                    filterBranches(); 
+                    const isDark = document.documentElement.classList.contains('dark');
+                    initChart(isDark);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                form.submit(); // fallback to normal reload if fetch fails
+            } finally {
+                form.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        }
+
         function filterBranches() {
             const selectedArea = document.getElementById('areaSelect').value;
             const branchSelect = document.getElementById('branchSelect');
-            const options = branchSelect.options;
+            if(!branchSelect) return;
 
+            const options = branchSelect.options;
             let currentBranchValid = false;
 
             for (let i = 0; i < options.length; i++) {
@@ -549,19 +573,18 @@
         function handleAreaChange() {
             document.getElementById('branchSelect').value = 'All';
             filterBranches();
-            document.getElementById('areaSelect').form.submit();
+            fetchFilteredData();
         }
 
-        // 5. INTUITIVE LINE CHART INITIALIZATION
+        // 4. INTUITIVE LINE CHART INITIALIZATION
         let stockoutChart;
         window.kpiCharts = {};
 
-        // Ingest Data from Controller
-        const chartData = {!! isset($stockOutRates) ? json_encode($stockOutRates) : '[]' !!};
-        const kpiYtd = {!! isset($kpiYtd) ? json_encode($kpiYtd) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[]}' !!};
-        const kpiWeekly = {!! isset($kpiWeekly) ? json_encode($kpiWeekly) : '{"labels":[],"afterPO":[],"perBranch":[],"beforePO":[],"doi":[],"classA":[]}' !!};
-        
-        let currentKpiData = kpiYtd;
+        // Helper to grab safe JSON array keys defensively 
+        function getSafeData(dataKey) {
+            if (!window.currentKpiData) return [];
+            return window.currentKpiData[dataKey] || [];
+        }
 
         // Reusable function to create the highly intuitive KPI charts
         function createKpiChart(ctxId, label, dataKey, colorStr, isDark, isPercentage = true) {
@@ -572,15 +595,18 @@
             const gridColor = isDark ? '#374151' : '#e5e7eb';
             const fontColor = isDark ? '#9ca3af' : '#6b7280';
             
-            // Generate some top headroom so labels don't get chopped off at the top border
-            const dataArr = currentKpiData[dataKey] || [];
-            const dataMax = dataArr.length ? Math.max(...dataArr) : 0;
-            const suggestedMax = dataMax + (dataMax * 0.15); 
+            // Extract the live data mapped to global
+            const dataArr = getSafeData(dataKey);
+            
+            // Ensure numbers parse safely to avoid ChartJS crash if null/undefined returned
+            const validData = dataArr.filter(v => v !== null && v !== undefined && !isNaN(v)).map(Number);
+            const dataMax = validData.length ? Math.max(...validData) : 0;
+            const suggestedMax = dataMax + (dataMax * 0.15) || 1;
 
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: currentKpiData.labels,
+                    labels: window.currentKpiData.labels || [],
                     datasets: [{
                         label: label,
                         data: dataArr,
@@ -626,7 +652,7 @@
                             // Smart Align: If the point is dangerously close to the max scale limit, move the label Below the point
                             align: function(context) {
                                 const value = context.dataset.data[context.dataIndex];
-                                const currentMax = context.chart.scales.y.max;
+                                const currentMax = context.chart.scales.y.max || 1; // Fallback to 1 to prevent division by zero
                                 return value > (currentMax * 0.85) ? 'bottom' : 'top';
                             },
                             anchor: 'center',
@@ -669,24 +695,38 @@
         }
 
         function initChart(isDark) {
+            // Destroy existing charts to prevent artifacting 
             if (stockoutChart) stockoutChart.destroy();
             if (window.kpiCharts.afterPO) window.kpiCharts.afterPO.destroy();
             if (window.kpiCharts.perBranch) window.kpiCharts.perBranch.destroy();
             if (window.kpiCharts.beforePO) window.kpiCharts.beforePO.destroy();
             if (window.kpiCharts.doi) window.kpiCharts.doi.destroy();
             if (window.kpiCharts.classA) window.kpiCharts.classA.destroy();
+            if (window.kpiCharts.classADoI) window.kpiCharts.classADoI.destroy();
+
+            // Fetch dynamic payload from hidden container
+            const dataContainer = document.getElementById('chartDataContainer');
+            const chartData = JSON.parse(dataContainer.getAttribute('data-chart'));
+            const kpiYtd = JSON.parse(dataContainer.getAttribute('data-kpi-ytd'));
+            const kpiWeekly = JSON.parse(dataContainer.getAttribute('data-kpi-weekly'));
+            
+            const timeframeToggle = document.getElementById('timeframeToggle');
+            const timeframe = timeframeToggle ? timeframeToggle.value : 'ytd';
+            window.currentKpiData = timeframe === 'weekly' ? kpiWeekly : kpiYtd;
 
             Chart.defaults.color = isDark ? '#9ca3af' : '#4b5563';
 
+            // AREA BAR CHART
             const labels = [...new Set(chartData.map(d => d.area))];
             const areaAverageData = labels.map(label => {
                 const recordA = chartData.find(d => d.area === label && d.pareto_class === 'Class A');
                 const recordB = chartData.find(d => d.area === label && d.pareto_class === 'Class B');
                 const recordC = chartData.find(d => d.area === label && d.pareto_class === 'Class C');
 
-                const rateA = recordA ? (recordA.stockouts / recordA.total) * 100 : 0;
-                const rateB = recordB ? (recordB.stockouts / recordB.total) * 100 : 0;
-                const rateC = recordC ? (recordC.stockouts / recordC.total) * 100 : 0;
+                const rateA = recordA && recordA.total > 0 ? (recordA.stockouts / recordA.total) * 100 : 0;
+                const rateB = recordB && recordB.total > 0 ? (recordB.stockouts / recordB.total) * 100 : 0;
+                const rateC = recordC && recordC.total > 0 ? (recordC.stockouts / recordC.total) * 100 : 0;
+
                 return Number(((rateA + rateB + rateC) / 3).toFixed(2));
             });
 
@@ -711,50 +751,49 @@
                         plugins: {
                             legend: { display: false },
                             datalabels: {
-                                display: true,
-                                align: 'top',
-                                anchor: 'end',
-                                offset: 4,
+                                display: true, align: 'top', anchor: 'end', offset: 4,
                                 color: isDark ? '#f3f4f6' : '#111827',
                                 font: { weight: 'bold', size: 11 },
                                 formatter: function(value) { return value + '%'; }
                             }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: isDark ? '#374151' : '#e5e7eb', borderDash: [5, 5] },
-                                ticks: { color: isDark ? '#9ca3af' : '#6b7280', callback: function(value) { return value + '%'; } },
-                                border: { display: false }
-                            },
-                            x: { 
-                                grid: { display: false },
-                                ticks: { color: isDark ? '#9ca3af' : '#4b5563', font: { weight: 'bold' } },
-                                border: { color: isDark ? '#4b5563' : '#d1d5db' }
-                            }
+                            y: { beginAtZero: true, grid: { color: isDark ? '#374151' : '#e5e7eb', borderDash: [5, 5] }, ticks: { color: isDark ? '#9ca3af' : '#6b7280', callback: function(value) { return value + '%'; } }, border: { display: false } },
+                            x: { grid: { display: false }, ticks: { color: isDark ? '#9ca3af' : '#4b5563', font: { weight: 'bold' } }, border: { color: isDark ? '#4b5563' : '#d1d5db' } }
                         }
                     }
                 });
             }
 
-            window.kpiCharts.afterPO = createKpiChart('chartAfterPO', 'After PO OOS', 'afterPO', '#10b981', isDark, true);
-            window.kpiCharts.beforePO = createKpiChart('chartBeforePO', 'Before PO OOS', 'beforePO', '#f59e0b', isDark, true);
-            window.kpiCharts.perBranch = createKpiChart('chartPerBranch', 'Per Branch OOS', 'perBranch', '#3b82f6', isDark, true);
+            // OTHER KPI CHARTS (Timeline graphs re-linked to Excel Data)
+            window.kpiCharts.afterPO = createKpiChart('chartAfterPO', 'After PO OOS %', 'afterPO', '#10b981', isDark, true);
+            window.kpiCharts.beforePO = createKpiChart('chartBeforePO', 'Before PO OOS %', 'beforePO', '#f59e0b', isDark, true);
+            window.kpiCharts.perBranch = createKpiChart('chartPerBranch', 'Per Branch OOS %', 'perBranch', '#3b82f6', isDark, true);
             window.kpiCharts.doi = createKpiChart('chartDoI', 'Days of Inventory', 'doi', '#8b5cf6', isDark, false);
-            window.kpiCharts.classA = createKpiChart('chartClassA', 'Class A Stock Out', 'classA', '#ef4444', isDark, true);
+            
+            // Restored Class A and added new Class A DoI graph linked to JSON payload
+            window.kpiCharts.classA = createKpiChart('chartClassA', 'Class A Stock Out %', 'classA', '#ef4444', isDark, true);
+            window.kpiCharts.classADoI = createKpiChart('chartClassADoI', 'Class A DOI', 'classADoI', '#ec4899', isDark, false);
         }
 
         window.toggleTimeframe = function(timeframe) {
-            currentKpiData = timeframe === 'weekly' ? kpiWeekly : kpiYtd;
+            const dataContainer = document.getElementById('chartDataContainer');
+            const kpiYtd = JSON.parse(dataContainer.getAttribute('data-kpi-ytd'));
+            const kpiWeekly = JSON.parse(dataContainer.getAttribute('data-kpi-weekly'));
             
+            window.currentKpiData = timeframe === 'weekly' ? kpiWeekly : kpiYtd;
+            
+            // Defensively handle edge cases where dataset might be incomplete or missing
             const updateChartData = (chartObj, dataKey) => {
                 if(chartObj) {
-                    chartObj.data.labels = currentKpiData.labels;
-                    chartObj.data.datasets[0].data = currentKpiData[dataKey];
+                    const dataArr = getSafeData(dataKey);
+
+                    chartObj.data.labels = window.currentKpiData.labels || [];
+                    chartObj.data.datasets[0].data = dataArr;
                     
-                    const dataArr = currentKpiData[dataKey] || [];
-                    const maxVal = dataArr.length ? Math.max(...dataArr) : 0;
-                    chartObj.options.scales.y.suggestedMax = maxVal + (maxVal * 0.15);
+                    const validData = dataArr.filter(v => v !== null && v !== undefined && !isNaN(v)).map(Number);
+                    const maxVal = validData.length ? Math.max(...validData) : 0;
+                    chartObj.options.scales.y.suggestedMax = maxVal + (maxVal * 0.15) || 1;
                     
                     chartObj.update();
                 }
@@ -764,17 +803,20 @@
             updateChartData(window.kpiCharts.beforePO, 'beforePO');
             updateChartData(window.kpiCharts.perBranch, 'perBranch');
             updateChartData(window.kpiCharts.doi, 'doi');
+            
+            // Ensures Class A graphs update when switching between Weekly and YTD
             updateChartData(window.kpiCharts.classA, 'classA');
+            updateChartData(window.kpiCharts.classADoI, 'classADoI');
         };
 
         function updateChartTheme(isDark) {
             initChart(isDark);
         }
 
+        // Run instantiation on initial load
         const initialDarkState = localStorage.getItem('theme') === 'dark' || 
                                  (!localStorage.getItem('theme') && document.documentElement.classList.contains('dark'));
         initChart(initialDarkState);
-
     </script>
 </body>
 </html>
