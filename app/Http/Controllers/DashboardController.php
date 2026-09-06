@@ -6,6 +6,12 @@ use App\Models\InventoryRecord;
 use App\Models\KpiRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpPresentation\PhpPresentation;
+use PhpOffice\PhpPresentation\IOFactory;
+use PhpOffice\PhpPresentation\Style\Alignment;
+use PhpOffice\PhpPresentation\Style\Color;
+use PhpOffice\PhpPresentation\Style\Border;
 
 class DashboardController extends Controller
 {
@@ -80,8 +86,6 @@ class DashboardController extends Controller
             'classADoI' => $weeklyRecords->pluck('class_a_doi')->toArray(),
         ];
 
-        // The hardcoded fallback array has been completely removed so it stops overriding your real data.
-
         return view('dashboard.unified', compact(
             'classA', 'classB', 'classC', 'areas', 'branches', 
             'areaFilter', 'branchFilter', 'stockOutRates',
@@ -89,5 +93,108 @@ class DashboardController extends Controller
             'branchRateA', 'branchRateB', 'branchRateC', 'branchAverageRate',
             'kpiYtd', 'kpiWeekly'
         ));
+    }
+
+    // --- PDF EXPORT ---
+    public function exportPdf()
+    {
+        // Retrieve your specific motorcycle or spare parts data
+        $records = InventoryRecord::limit(100)->get();
+
+        // Load a Blade view and pass the data
+        $pdf = Pdf::loadView('exports.inventory_pdf', compact('records'));
+        
+        return $pdf->download('Koronadal_Warehouse_Inventory.pdf');
+    }
+
+// --- POWERPOINT EXPORT ---
+    public function exportPptx()
+    {
+        $presentation = new PhpPresentation();
+        
+        // --- SLIDE 1: TITLE SLIDE ---
+        $slide1 = $presentation->getActiveSlide();
+        $titleShape = $slide1->createRichTextShape()
+            ->setHeight(100)->setWidth(800)
+            ->setOffsetX(80)->setOffsetY(250);
+        $titleShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $titleShape->createTextRun('Koronadal Central Warehouse')
+            ->getFont()->setBold(true)->setSize(36);
+            
+        $subTitleShape = $slide1->createRichTextShape()
+            ->setHeight(50)->setWidth(800)
+            ->setOffsetX(80)->setOffsetY(320);
+        $subTitleShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $subTitleShape->createTextRun('Distribution & KPI Metrics Report')
+            ->getFont()->setSize(24)->setColor(new Color('FF555555'));
+
+        // --- SLIDE 2: KPI METRICS TABLE ---
+        $slide2 = $presentation->createSlide();
+        
+        // Slide 2 Title
+        $slide2Title = $slide2->createRichTextShape()
+            ->setHeight(50)->setWidth(800)
+            ->setOffsetX(50)->setOffsetY(30);
+        $slide2Title->createTextRun('Key Performance Indicators')
+            ->getFont()->setBold(true)->setSize(28);
+
+        // Fetch the latest metrics from the database
+        $latestKpi = \App\Models\KpiRecord::latest()->first();
+        
+        // Map the metrics you want to display
+        $metrics = [
+            'Class A Days of Inventory (DOI)' => $latestKpi->class_a_doi ?? 'N/A',
+            'Motorcycle Unit Allocation (CBM)' => $latestKpi->motorcycle_cbm_vol ?? 'N/A',
+            'Spare Parts Fleet Weight (kg)' => $latestKpi->spare_parts_weight ?? 'N/A',
+            'Overall Warehouse DOI' => $latestKpi->overall_doi ?? 'N/A',
+        ];
+
+        // Create a 2-column Table Shape
+        $tableShape = $slide2->createTableShape(2);
+        $tableShape->setHeight(300)->setWidth(700)->setOffsetX(130)->setOffsetY(120);
+
+        // Define Table Header Row
+        $headerRow = $tableShape->createRow();
+        $headerRow->setHeight(40);
+        
+        // Header Cell 1
+        $col1 = $headerRow->nextCell();
+        $col1->setWidth(400);
+        $col1->getFill()->setFillType(\PhpOffice\PhpPresentation\Style\Fill::FILL_SOLID)
+             ->setStartColor(new Color('FF0070C0'));
+        $col1->createTextRun('Metric Description')->getFont()->setBold(true)->setColor(new Color('FFFFFFFF'));
+        
+        // Header Cell 2
+        $col2 = $headerRow->nextCell();
+        $col2->setWidth(300);
+        $col2->getFill()->setFillType(\PhpOffice\PhpPresentation\Style\Fill::FILL_SOLID)
+             ->setStartColor(new Color('FF0070C0'));
+        $col2->createTextRun('Current Value')->getFont()->setBold(true)->setColor(new Color('FFFFFFFF'));
+
+        // Populate Table Rows with Metrics Data
+        foreach ($metrics as $name => $value) {
+            $row = $tableShape->createRow();
+            $row->setHeight(35);
+            
+            $cell1 = $row->nextCell();
+            $cell1->createTextRun($name)->getFont()->setSize(14);
+            $cell1->getBorders()->getBottom()
+                  ->setLineStyle(Border::LINE_SINGLE)
+                  ->setColor(new Color('FFCCCCCC'));
+            
+            $cell2 = $row->nextCell();
+            $cell2->createTextRun((string) $value)->getFont()->setSize(14);
+            $cell2->getBorders()->getBottom()
+                  ->setLineStyle(Border::LINE_SINGLE)
+                  ->setColor(new Color('FFCCCCCC'));
+        }
+
+        // --- SAVE AND EXPORT ---
+        $writer = IOFactory::createWriter($presentation, 'PowerPoint2007');
+        $fileName = 'KPI_Metrics_Export_' . date('Y_m_d') . '.pptx';
+        $tempFile = tempnam(sys_get_temp_dir(), 'pptx');
+        $writer->save($tempFile);
+
+        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 }

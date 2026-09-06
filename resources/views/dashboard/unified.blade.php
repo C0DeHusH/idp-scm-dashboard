@@ -14,6 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chart.js DataLabels Plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <!-- html2pdf for Client-Side PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
     <div class="flex h-screen overflow-hidden">
@@ -43,7 +45,7 @@
                             <div class="relative inline-block text-left" id="dataDropdownContainer">
                                 <button onclick="toggleDropdown('dataDropdownMenu')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-lg shadow-md transition duration-150 ease-in-out inline-flex items-center gap-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-                                    Data Sync
+                                    Data
                                     <svg class="w-4 h-4 ml-1 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
 
@@ -61,15 +63,17 @@
                                     </div>
                                     <div class="p-1.5" role="menu" aria-orientation="vertical">
                                         <p class="px-3 py-1.5 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Presentation Exports</p>
-                                        <!-- PDF Export Option -->
-                                        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" role="menuitem">
+                                        
+                                        <!-- PDF Export Option (Client-Side) -->
+                                        <a href="#" onclick="exportDashboardToPDF(event)" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" role="menuitem">
                                             <svg class="mr-3 h-5 w-5 text-rose-400 group-hover:text-rose-600 dark:group-hover:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                             </svg>
                                             Export as PDF Report
                                         </a>
+                                        
                                         <!-- PPT Export Option -->
-                                        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-colors" role="menuitem">
+                                        <a href="{{ route('export.pptx') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-colors" role="menuitem">
                                             <svg class="mr-3 h-5 w-5 text-orange-400 group-hover:text-orange-600 dark:group-hover:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                             </svg>
@@ -87,7 +91,7 @@
                                 </button>
                             </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium text-sm ml-2">Admin Login</a>
+                            <a href="{{ route('login') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium text-sm ml-2">Login</a>
                         @endauth
                     </div>
                 </div>
@@ -100,7 +104,7 @@
                 <div class="w-full mx-auto py-8 px-6 sm:px-8 lg:px-12">
                     
                     <!-- Unified Form for all filtering (AJAX Intercepted) -->
-                    <form method="GET" action="{{ route('dashboard.unified') }}" id="dashboardForm" class="space-y-8">
+                    <form method="GET" action="{{ route('dashboard.unified') }}" id="dashboardForm" class="space-y-8 bg-gray-50 dark:bg-gray-900 p-2">
                         
                         <!-- Hidden Container storing encoded PHP payload for Charts -->
                         <div id="chartDataContainer" class="hidden" 
@@ -131,7 +135,7 @@
                             </div>
 
                             <!-- Area Rate Cards -->
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 break-inside-avoid">
                                 <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-red-500">
                                     <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Area Class A Rate</h3>
                                     <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ round($areaRateA) }}%</p>
@@ -157,7 +161,7 @@
                                 </div>
                             </div>
                             
-                            <div class="lg:col-span-2 border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                            <div class="lg:col-span-2 border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                 <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Average Stock Out Rate by Area</h4>
                                 <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Comparison</p>
                                 <div class="relative flex-grow"><canvas id="stockoutChart"></canvas></div>
@@ -178,34 +182,34 @@
                                 
                                 <!-- Graph Grid -->
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch OOS</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
                                         <div class="relative flex-grow"><canvas id="chartPerBranch"></canvas></div>
                                     </div>
-                                        <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall After PO</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
                                         <div class="relative flex-grow"><canvas id="chartAfterPO"></canvas></div>
                                     </div>
-                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Overall Before PO</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Stockout %</p>
                                         <div class="relative flex-grow"><canvas id="chartBeforePO"></canvas></div>
                                     </div>
                                     
-                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Per Branch Class A Stock Out Rate</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Network Priority Risk %</p>
                                         <div class="relative flex-grow"><canvas id="chartClassA"></canvas></div>
                                     </div>
-                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Class A Days of Inventory</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">Class A DoI Ratio</p>
                                         <div class="relative flex-grow"><canvas id="chartClassADoI"></canvas></div>
                                     </div>
 
-                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30">
+                                    <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col h-80 hover:shadow-md transition-shadow bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                         <h4 class="text-sm font-bold text-center mb-1 text-gray-800 dark:text-gray-200">Days of Inventory</h4>
                                         <p class="text-[10px] text-center text-gray-500 mb-3 uppercase tracking-wider">DoI Ratio</p>
                                         <div class="relative flex-grow"><canvas id="chartDoI"></canvas></div>
@@ -237,7 +241,7 @@
                             </div>
 
                             <!-- Branch Rate Cards -->
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 break-inside-avoid">
                                 <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 border-t-4 border-rose-500">
                                     <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Branch Class A Rate</h3>
                                     <p class="text-3xl font-black text-gray-900 dark:text-white mt-3">{{ round($branchRateA) }}%</p>
@@ -269,7 +273,7 @@
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     
                                     <!-- Class A Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
                                         <h3 class="font-bold text-sm text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
                                             <span>Class A Models</span>
                                             <span class="text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-300 px-2 py-1 rounded-full font-semibold">{{ $classA->count() }} items</span>
@@ -305,7 +309,7 @@
                                     </div>
 
                                     <!-- Class B Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
                                         <h3 class="font-bold text-sm text-amber-600 dark:text-amber-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
                                             <span>Class B Models</span>
                                             <span class="text-[10px] bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 px-2 py-1 rounded-full font-semibold">{{ $classB->count() }} items</span>
@@ -341,7 +345,7 @@
                                     </div>
 
                                     <!-- Class C Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col">
+                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
                                         <h3 class="font-bold text-sm text-yellow-600 dark:text-yellow-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
                                             <span>Class C Models</span>
                                             <span class="text-[10px] bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-full font-semibold">{{ $classC->count() }} items</span>
@@ -379,7 +383,7 @@
                             </div>
 
                             <!-- Network Watchlist -->
-                            <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col bg-gray-50/50 dark:bg-gray-800/30">
+                            <div class="border border-gray-100 dark:border-gray-700/60 rounded-xl p-5 shadow-sm flex flex-col bg-gray-50/50 dark:bg-gray-800/30 break-inside-avoid">
                                 <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">Branch Watchlist (Class A Stockouts)</h2>
                                 <div class="overflow-y-auto max-h-64 flex-grow pr-1">
                                     <table class="w-full text-left border-collapse text-sm">
@@ -843,6 +847,47 @@
         const initialDarkState = localStorage.getItem('theme') === 'dark' || 
                                  (!localStorage.getItem('theme') && document.documentElement.classList.contains('dark'));
         initChart(initialDarkState);
+        
+        // --- IMPROVED: Client-Side PDF Generation Logic ---
+        function exportDashboardToPDF(event) {
+            event.preventDefault();
+            
+            // Close the dropdown menu so it doesn't appear in the PDF
+            const dropdownMenu = document.getElementById('dataDropdownMenu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.add('hidden');
+            }
+            
+            // Target the main dashboard form area (to bypass full-screen flex clipping)
+            const element = document.getElementById('dashboardForm');
+            
+            // Expand scrollable elements so all data is captured in the PDF
+            const scrollables = element.querySelectorAll('.overflow-y-auto');
+            const originalStyles = [];
+            
+            scrollables.forEach((el) => {
+                originalStyles.push({ el: el, cssText: el.style.cssText });
+                el.style.maxHeight = 'none'; // Uncap height
+                el.style.overflow = 'visible'; // Reveal hidden rows
+            });
+
+            // Configure the PDF output with Page Break Avoidance
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5], // Top, Left, Bottom, Right
+                filename:     'Dashboard_Metrics_Export_' + new Date().toISOString().slice(0,10) + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' },
+                pagebreak:    { mode: ['css', 'legacy'], avoid: '.break-inside-avoid' }
+            };
+
+            // Generate PDF and instantly restore original UI state
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function () {
+                originalStyles.forEach(item => {
+                    item.el.style.cssText = item.cssText;
+                });
+            }).save();
+        }
     </script>
 </body>
 </html>

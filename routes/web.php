@@ -4,7 +4,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ManpowerController;
+
+
 
 // Public/Guest Dashboard View
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard.unified');
@@ -15,8 +16,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Data Import Controls
     Route::get('/admin/import', [ImportController::class, 'index'])->name('admin.import');
     Route::post('/admin/import', [ImportController::class, 'store'])->name('admin.import.store');
-    // Manpower CRUD Routes
-    Route::resource('manpower', ManpowerController::class);
+
+    Route::get('/export/pdf', [DashboardController::class, 'exportPdf'])->name('export.pdf');
+    Route::get('/export/pptx', [DashboardController::class, 'exportPptx'])->name('export.pptx');
 
     // Profile Management (Laravel Breeze Default)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
