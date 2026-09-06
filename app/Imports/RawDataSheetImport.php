@@ -28,6 +28,7 @@ class RawDataSheetImport implements ToModel, WithHeadingRow
             'pareto_class'        => $row['class'],
             'branch'              => $row['branch'],
             'model'               => $row['model'],
+            'rank'                => $row['rank'] ?? null,
             'stock_status'        => $row['stock_status'],
             'stock_status_count'  => $row['stock_status_count'] ?? 1,
             'remaining_inventory' => $row['remaining_inventory'] ?? 0,

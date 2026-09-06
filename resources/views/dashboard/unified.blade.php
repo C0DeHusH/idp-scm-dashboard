@@ -59,7 +59,7 @@
                                             </svg>
                                             Import Workbooks
                                         </a>
-                                   
+                                    
                                     </div>
                                     <div class="p-1.5" role="menu" aria-orientation="vertical">
                                         <p class="px-3 py-1.5 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Presentation Exports</p>
@@ -267,40 +267,39 @@
                                 </div>
                             </div>
 
-                            <!-- Pareto Action Models -->
+                            <!-- Pareto Action Models (Redesigned Grid Sorted Ascending by Rank with DOI per model) -->
                             <div class="mb-10">
                                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Pareto Action Models</h3>
+                                
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     
                                     <!-- Class A Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
-                                        <h3 class="font-bold text-sm text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                                            <span>Class A Models</span>
-                                            <span class="text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-300 px-2 py-1 rounded-full font-semibold">{{ $classA->count() }} items</span>
-                                        </h3>
-                                        <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
-                                            <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
-                                                <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
-                                                    <tr>
-                                                        <th class="p-2">Model</th>
-                                                        <th class="p-2 text-center">Status</th>
-                                                        <th class="p-2 text-center">Inv</th>
-                                                        <th class="p-2 text-center">Trnsf</th>
-                                                        <th class="p-2 text-center">DOI</th>
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl border-t-4 border-red-500 dark:border-yellow-400 p-5 shadow-md flex flex-col break-inside-avoid transition-colors">
+                                        <div class="flex justify-between items-end mb-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+                                            <h3 class="text-red-600 dark:text-yellow-400 font-bold text-lg">CLASS A</h3>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400 font-semibold">{{ $classA->count() }} MODELS</span>
+                                        </div>
+                                        <div class="overflow-x-auto overflow-y-auto max-h-96 pr-1">
+                                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                                                <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                                                    <tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-slate-700 uppercase tracking-wider">
+                                                        <th class="pb-2 font-semibold p-2 w-12">Rank</th>
+                                                        <th class="pb-2 font-semibold p-2">Model</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Status</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Inv</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Trnsf</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">DOI</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                                    @foreach($classA as $item)
-                                                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
-                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                                            {{ $item->model }}
-                                                        </td>
-                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
-                                                            {{ $item->stock_status }}
-                                                        </td>
+                                                <tbody class="font-medium divide-y divide-gray-100 dark:divide-slate-700/50">
+                                                    @foreach($classA->sortBy('rank') as $item)
+                                                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                                        <td class="p-2 text-gray-500 dark:text-gray-400 font-bold">{{ $item->rank ?? $loop->iteration }}</td>
+                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400 font-bold' : 'text-gray-800 dark:text-gray-200' }}">{{ $item->model }}</td>
+                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400' }}">{{ $item->stock_status }}</td>
                                                         <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ round($item->remaining_inventory) }}</td>
-                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ round($item->suggested_transfer) }}</td>
-                                                        <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ round($item->doi) }}</td>
+                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ round($item->suggested_transfer) }}</td>
+                                                        <td class="p-2 text-center text-purple-600 dark:text-purple-400 font-semibold">{{ round($item->doi) }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -309,34 +308,32 @@
                                     </div>
 
                                     <!-- Class B Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
-                                        <h3 class="font-bold text-sm text-amber-600 dark:text-amber-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                                            <span>Class B Models</span>
-                                            <span class="text-[10px] bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-300 px-2 py-1 rounded-full font-semibold">{{ $classB->count() }} items</span>
-                                        </h3>
-                                        <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
-                                            <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
-                                                <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
-                                                    <tr>
-                                                        <th class="p-2">Model</th>
-                                                        <th class="p-2 text-center">Status</th>
-                                                        <th class="p-2 text-center">Inv</th>
-                                                        <th class="p-2 text-center">Trnsf</th>
-                                                        <th class="p-2 text-center">DOI</th>
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl border-t-4 border-amber-500 dark:border-blue-400 p-5 shadow-md flex flex-col break-inside-avoid transition-colors">
+                                        <div class="flex justify-between items-end mb-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+                                            <h3 class="text-amber-600 dark:text-blue-400 font-bold text-lg">CLASS B</h3>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400 font-semibold">{{ $classB->count() }} MODELS</span>
+                                        </div>
+                                        <div class="overflow-x-auto overflow-y-auto max-h-96 pr-1">
+                                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                                                <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                                                    <tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-slate-700 uppercase tracking-wider">
+                                                        <th class="pb-2 font-semibold p-2 w-12">Rank</th>
+                                                        <th class="pb-2 font-semibold p-2">Model</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Status</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Inv</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Trnsf</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">DOI</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                                    @foreach($classB as $item)
-                                                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
-                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                                            {{ $item->model }}
-                                                        </td>
-                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
-                                                            {{ $item->stock_status }}
-                                                        </td>
+                                                <tbody class="font-medium divide-y divide-gray-100 dark:divide-slate-700/50">
+                                                    @foreach($classB->sortBy('rank') as $item)
+                                                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                                        <td class="p-2 text-gray-500 dark:text-gray-400 font-bold">{{ $item->rank ?? $loop->iteration }}</td>
+                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-amber-600 dark:text-blue-400 font-bold' : 'text-gray-800 dark:text-gray-200' }}">{{ $item->model }}</td>
+                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400' }}">{{ $item->stock_status }}</td>
                                                         <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ round($item->remaining_inventory) }}</td>
-                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ round($item->suggested_transfer) }}</td>
-                                                        <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ round($item->doi) }}</td>
+                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ round($item->suggested_transfer) }}</td>
+                                                        <td class="p-2 text-center text-purple-600 dark:text-purple-400 font-semibold">{{ round($item->doi) }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -345,40 +342,39 @@
                                     </div>
 
                                     <!-- Class C Actions -->
-                                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 shadow-sm rounded-xl p-5 flex flex-col break-inside-avoid">
-                                        <h3 class="font-bold text-sm text-yellow-600 dark:text-yellow-400 border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                                            <span>Class C Models</span>
-                                            <span class="text-[10px] bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-full font-semibold">{{ $classC->count() }} items</span>
-                                        </h3>
-                                        <div class="overflow-x-auto overflow-y-auto max-h-80 pr-1">
-                                            <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
-                                                <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase">
-                                                    <tr>
-                                                        <th class="p-2">Model</th>
-                                                        <th class="p-2 text-center">Status</th>
-                                                        <th class="p-2 text-center">Inv</th>
-                                                        <th class="p-2 text-center">Trnsf</th>
-                                                        <th class="p-2 text-center">DOI</th>
+                                    <div class="bg-white dark:bg-slate-800 rounded-xl border-t-4 border-yellow-500 dark:border-gray-400 p-5 shadow-md flex flex-col break-inside-avoid transition-colors">
+                                        <div class="flex justify-between items-end mb-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+                                            <h3 class="text-yellow-600 dark:text-gray-300 font-bold text-lg">CLASS C</h3>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400 font-semibold">{{ $classC->count() }} MODELS</span>
+                                        </div>
+                                        <div class="overflow-x-auto overflow-y-auto max-h-96 pr-1">
+                                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                                                <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                                                    <tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-slate-700 uppercase tracking-wider">
+                                                        <th class="pb-2 font-semibold p-2 w-12">Rank</th>
+                                                        <th class="pb-2 font-semibold p-2">Model</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Status</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Inv</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">Trnsf</th>
+                                                        <th class="pb-2 font-semibold p-2 text-center">DOI</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700/40">
-                                                    @foreach($classC as $item)
-                                                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
-                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-gray-700 dark:text-gray-300' }}">
-                                                            {{ $item->model }}
-                                                        </td>
-                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400' }}">
-                                                            {{ $item->stock_status }}
-                                                        </td>
+                                                <tbody class="font-medium divide-y divide-gray-100 dark:divide-slate-700/50">
+                                                    @foreach($classC->sortBy('rank') as $item)
+                                                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                                        <td class="p-2 text-gray-500 dark:text-gray-400 font-bold">{{ $item->rank ?? $loop->iteration }}</td>
+                                                        <td class="p-2 {{ $item->stock_status == 'Stockout' ? 'text-yellow-600 dark:text-gray-400 font-bold' : 'text-gray-800 dark:text-gray-200' }}">{{ $item->model }}</td>
+                                                        <td class="p-2 text-center text-xs font-semibold {{ $item->stock_status == 'Stockout' ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400' }}">{{ $item->stock_status }}</td>
                                                         <td class="p-2 text-center text-gray-700 dark:text-gray-300">{{ round($item->remaining_inventory) }}</td>
-                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-semibold">{{ round($item->suggested_transfer) }}</td>
-                                                        <td class="p-2 text-center text-gray-500 dark:text-gray-400">{{ round($item->doi) }}</td>
+                                                        <td class="p-2 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ round($item->suggested_transfer) }}</td>
+                                                        <td class="p-2 text-center text-purple-600 dark:text-purple-400 font-semibold">{{ round($item->doi) }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
 
@@ -389,23 +385,27 @@
                                     <table class="w-full text-left border-collapse text-sm">
                                         <thead class="sticky top-0 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 uppercase text-xs">
                                             <tr>
+                                                <th class="p-3 w-12">Rank</th>
                                                 <th class="p-3">Model</th>
                                                 <th class="p-3 text-center">Status</th>
                                                 <th class="p-3 text-center">Inventory</th>
                                                 <th class="p-3 text-center">Suggested Transfer</th>
+                                                <th class="p-3 text-center">DOI</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700/50">
-                                            @forelse($classA->where('stock_status', 'Stockout')->take(10) as $item)
+                                            @forelse($classA->where('stock_status', 'Stockout')->sortBy('rank')->take(10) as $item)
                                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/30 transition">
+                                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">{{ $item->rank ?? $loop->iteration }}</td>
                                                 <td class="p-3 font-semibold text-red-600 dark:text-red-400">{{ $item->model }}</td>
                                                 <td class="p-3 text-center text-red-600 dark:text-red-400 font-semibold">{{ $item->stock_status }}</td>
                                                 <td class="p-3 text-center text-gray-700 dark:text-gray-300">{{ round($item->remaining_inventory) }}</td>
                                                 <td class="p-3 text-center text-indigo-600 dark:text-indigo-400 font-bold">{{ round($item->suggested_transfer) }}</td>
+                                                <td class="p-3 text-center text-purple-600 dark:text-purple-400 font-semibold">{{ round($item->doi) }}</td>
                                             </tr>
                                             @empty
                                             <tr>
-                                                <td colspan="4" class="p-4 text-center text-gray-500">No active Class A stockouts found.</td>
+                                                <td colspan="6" class="p-4 text-center text-gray-500">No active Class A stockouts found.</td>
                                             </tr>
                                             @endforelse
                                         </tbody>
