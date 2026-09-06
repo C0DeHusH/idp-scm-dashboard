@@ -4,73 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Synchronization Hub - SCM</title>
-    <!-- Enhanced Success & Error Toast Notifications Pop-Up -->
-    @if (session('success'))
-        <div id="toast-success" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-emerald-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
-            <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-xl"></div>
-            
-            <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 text-emerald-500 bg-emerald-100/50 rounded-xl dark:bg-emerald-900/40 dark:text-emerald-400 relative z-10">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            
-            <div class="ml-3 flex-grow relative z-10">
-                <p class="text-sm font-bold text-gray-900 dark:text-white">Sync Complete</p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{{ session('success') }}</p>
-            </div>
-            
-            <button type="button" class="relative z-10 ml-auto -mx-1.5 -my-1.5 bg-transparent text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" onclick="document.getElementById('toast-success').style.display='none'" aria-label="Close">
-                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-            </button>
-        </div>
-        <script>
-            setTimeout(function() {
-                const toast = document.getElementById('toast-success');
-                if (toast) {
-                    toast.classList.remove('translate-y-0', 'opacity-100');
-                    toast.classList.add('translate-y-10', 'opacity-0');
-                    setTimeout(() => toast.remove(), 500); 
-                }
-            }, 5000); 
-        </script>
-    @endif
-
-    <!-- NEW ERROR TOAST -->
-    @if (session('error'))
-        <div id="toast-error" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-red-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
-            <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-xl"></div>
-            
-            <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 text-red-500 bg-red-100/50 rounded-xl dark:bg-red-900/40 dark:text-red-400 relative z-10">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            
-            <div class="ml-3 flex-grow relative z-10">
-                <p class="text-sm font-bold text-gray-900 dark:text-white">Import Failed</p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{{ session('error') }}</p>
-            </div>
-            
-            <button type="button" class="relative z-10 ml-auto -mx-1.5 -my-1.5 bg-transparent text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" onclick="document.getElementById('toast-error').style.display='none'" aria-label="Close">
-                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-            </button>
-        </div>
-        <script>
-            setTimeout(function() {
-                const toastError = document.getElementById('toast-error');
-                if (toastError) {
-                    toastError.classList.remove('translate-y-0', 'opacity-100');
-                    toastError.classList.add('translate-y-10', 'opacity-0');
-                    setTimeout(() => toastError.remove(), 500); 
-                }
-            }, 8000); 
-        </script>
-    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -81,92 +14,12 @@
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
     <div class="flex h-screen overflow-hidden">
         
-        <!-- Professional Sidebar with Expand/Collapse Support -->
-        <aside id="sidebar" class="relative hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 flex-shrink-0 transition-all duration-300 ease-in-out">
-            
-            <!-- Collapse / Expand Toggle Button -->
-            <button onclick="toggleSidebar()" class="absolute -right-3.5 top-5 bg-indigo-600 hover:bg-indigo-500 text-white p-1 rounded-full shadow-md z-20 focus:outline-none transition-transform duration-300" id="sidebarToggleBtn" title="Toggle Sidebar">
-                <svg id="toggleIcon" class="w-4 h-4 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-                </svg>
-            </button>
-
-            <!-- Sidebar Header / Logo -->
-            <div class="flex items-center h-16 px-6 bg-slate-950 border-b border-slate-800 overflow-hidden whitespace-nowrap">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-indigo-600 rounded-lg text-white font-bold text-base shadow-md flex-shrink-0">SCM</div>
-                    <span class="sidebar-text text-white font-semibold tracking-wide text-sm transition-opacity duration-300">Brilliant 4 Equity</span>
-                </div>
-            </div>
-
-            <!-- Navigation Links -->
-            <div class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overflow-x-hidden">
-                <div class="sidebar-text px-3 mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase transition-opacity duration-300">Core Modules</div>
-                
-                <a href="{{ route('dashboard.unified') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Dashboard Overview">
-                    <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                    <span class="sidebar-text transition-opacity duration-300">Dashboard Overview</span>
-                </a>
-
-                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Procurement">
-                    <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span class="sidebar-text transition-opacity duration-300">Procurement</span>
-                </a>
-
-                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Manpower">
-                    <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <span class="sidebar-text transition-opacity duration-300">Manpower</span>
-                </a>
-
-                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-800 hover:text-white group transition-colors" title="Budgets">
-                    <svg class="w-5 h-5 mr-3 text-slate-400 group-hover:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span class="sidebar-text transition-opacity duration-300">Budgets</span>
-                </a>
-
-                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg group shadow-sm transition-colors" title="KPI">
-                    <svg class="w-5 h-5 mr-3 text-indigo-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    <span class="sidebar-text transition-opacity duration-300">KPI Data Sync</span>
-                </a>
-            </div>
-
-            <!-- Sidebar Footer / User Profile Summary -->
-            <div class="p-4 bg-slate-950 border-t border-slate-800 overflow-hidden whitespace-nowrap">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white text-sm flex-shrink-0">
-                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                        </div>
-                        <div class="sidebar-text overflow-hidden transition-opacity duration-300">
-                            <p class="text-xs font-medium text-white truncate max-w-[120px]">{{ Auth::user()->name ?? 'Karl Winston Torres' }}</p>
-                            <p class="text-[10px] text-slate-400 truncate max-w-[120px]">{{ Auth::user()->email ?? 'Inventory & Distribution Manager' }}</p>
-                        </div>
-                    </div>
-                    
-                    <form method="POST" action="{{ route('logout') }}" class="sidebar-text m-0 p-0 transition-opacity duration-300">
-                        @csrf
-                        <button type="submit" class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Log Out">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </aside>
-
         <!-- Main Content Scrollable Area Container -->
-        <div class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <div class="flex-1 flex flex-col h-screen overflow-y-auto w-full">
             
             <!-- Top Header Navbar -->
             <header class="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center justify-between px-6 z-10 transition-colors duration-200">
                 <div class="flex items-center space-x-4 flex-1">
-                    <!-- Mobile Menu Toggle Button -->
-                    <button class="md:hidden text-gray-500 hover:text-indigo-600 dark:text-gray-400 focus:outline-none transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                    
                     <h1 class="text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight">
                         Data Synchronization Hub
                     </h1>
@@ -302,7 +155,7 @@
         </div>
     </div>
 
-    <!-- Enhanced Success Toast Notification Pop-Up -->
+    <!-- Enhanced Success Toast Notification -->
     @if (session('success'))
         <div id="toast-success" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-emerald-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-xl"></div>
@@ -324,49 +177,54 @@
                 </svg>
             </button>
         </div>
+    @endif
 
-        <script>
-            setTimeout(function() {
-                const toast = document.getElementById('toast-success');
-                if (toast) {
-                    toast.classList.remove('translate-y-0', 'opacity-100');
-                    toast.classList.add('translate-y-10', 'opacity-0');
-                    setTimeout(() => toast.remove(), 500); 
-                }
-            }, 5000); 
-        </script>
+    <!-- Enhanced Error Toast Notification -->
+    @if (session('error'))
+        <div id="toast-error" class="fixed bottom-8 right-8 flex items-center w-full max-w-sm p-4 space-x-4 text-gray-700 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] dark:text-gray-200 dark:bg-gray-800 border-l-4 border-red-500 transform transition-all duration-500 translate-y-0 opacity-100 z-50 overflow-hidden" role="alert">
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-xl"></div>
+            
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 text-red-500 bg-red-100/50 rounded-xl dark:bg-red-900/40 dark:text-red-400 relative z-10">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            
+            <div class="ml-3 flex-grow relative z-10">
+                <p class="text-sm font-bold text-gray-900 dark:text-white">Import Failed</p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{{ session('error') }}</p>
+            </div>
+            
+            <button type="button" class="relative z-10 ml-auto -mx-1.5 -my-1.5 bg-transparent text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" onclick="document.getElementById('toast-error').style.display='none'" aria-label="Close">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+            </button>
+        </div>
     @endif
 
     <!-- Global Layout Scripts -->
     <script>
-        // 1. Sidebar Expand/Collapse Logic
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const texts = sidebar.querySelectorAll('.sidebar-text');
-
-            if (sidebar.classList.contains('w-64')) {
-                sidebar.classList.remove('w-64');
-                sidebar.classList.add('w-20');
-                toggleIcon.classList.add('rotate-180');
-                texts.forEach(el => {
-                    el.style.opacity = '0';
-                    el.style.pointerEvents = 'none';
-                    setTimeout(() => el.classList.add('hidden'), 150);
-                });
-                localStorage.setItem('sidebarState', 'collapsed');
-            } else {
-                sidebar.classList.remove('w-20');
-                sidebar.classList.add('w-64');
-                toggleIcon.classList.remove('rotate-180');
-                texts.forEach(el => {
-                    el.classList.remove('hidden');
-                    setTimeout(() => el.style.opacity = '1', 50);
-                    el.style.pointerEvents = 'auto';
-                });
-                localStorage.setItem('sidebarState', 'expanded');
+        // 1. Toast Auto-Dismiss Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const successToast = document.getElementById('toast-success');
+            if (successToast) {
+                setTimeout(() => {
+                    successToast.classList.remove('translate-y-0', 'opacity-100');
+                    successToast.classList.add('translate-y-10', 'opacity-0');
+                    setTimeout(() => successToast.remove(), 500); 
+                }, 5000);
             }
-        }
+
+            const errorToast = document.getElementById('toast-error');
+            if (errorToast) {
+                setTimeout(() => {
+                    errorToast.classList.remove('translate-y-0', 'opacity-100');
+                    errorToast.classList.add('translate-y-10', 'opacity-0');
+                    setTimeout(() => errorToast.remove(), 500); 
+                }, 8000);
+            }
+        });
 
         // 2. Global Dark/Light Theme Logic
         function toggleDarkMode() {
@@ -382,24 +240,6 @@
 
         // 3. Restore UI States on page load
         window.addEventListener('DOMContentLoaded', () => {
-            // Restore Sidebar
-            if (localStorage.getItem('sidebarState') === 'collapsed') {
-                const sidebar = document.getElementById('sidebar');
-                const toggleIcon = document.getElementById('toggleIcon');
-                const texts = sidebar.querySelectorAll('.sidebar-text');
-                
-                if (sidebar) {
-                    sidebar.classList.remove('w-64');
-                    sidebar.classList.add('w-20');
-                    if (toggleIcon) toggleIcon.classList.add('rotate-180');
-                    texts.forEach(el => {
-                        el.style.opacity = '0';
-                        el.style.pointerEvents = 'none';
-                        el.classList.add('hidden');
-                    });
-                }
-            }
-
             // Restore Theme
             if (localStorage.getItem('theme') === 'light') {
                 document.documentElement.classList.remove('dark');
